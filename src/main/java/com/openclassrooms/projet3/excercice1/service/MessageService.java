@@ -4,6 +4,7 @@ import com.openclassrooms.projet3.excercice1.dto.MessageDto;
 import com.openclassrooms.projet3.excercice1.entity.Message;
 import com.openclassrooms.projet3.excercice1.entity.Rental;
 import com.openclassrooms.projet3.excercice1.entity.User;
+import com.openclassrooms.projet3.excercice1.exception.ResourceNotFoundException;
 import com.openclassrooms.projet3.excercice1.mapper.MessageMapper;
 import com.openclassrooms.projet3.excercice1.repository.MessageRepository;
 import com.openclassrooms.projet3.excercice1.repository.RentalRepository;
@@ -27,10 +28,10 @@ public class MessageService {
 
     public MessageDto create(MessageDto messageDto) {
         User user = userRepository.findById(messageDto.getUserId())
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé avec l'id: " + messageDto.getUserId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "id", messageDto.getUserId()));
 
         Rental rental = rentalRepository.findById(messageDto.getRentalId())
-                .orElseThrow(() -> new RuntimeException("Location non trouvée avec l'id: " + messageDto.getRentalId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Location", "id", messageDto.getRentalId()));
 
         Message message = messageMapper.toEntity(messageDto);
         message.setUser(user);
@@ -43,7 +44,7 @@ public class MessageService {
     @Transactional(readOnly = true)
     public MessageDto findById(Long id) {
         Message message = messageRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Message non trouvé avec l'id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Message", "id", id));
         return messageMapper.toDto(message);
     }
 
@@ -70,7 +71,7 @@ public class MessageService {
 
     public MessageDto update(Long id, MessageDto messageDto) {
         Message message = messageRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Message non trouvé avec l'id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Message", "id", id));
 
         messageMapper.updateEntityFromDto(messageDto, message);
         Message updatedMessage = messageRepository.save(message);
@@ -79,7 +80,7 @@ public class MessageService {
 
     public void delete(Long id) {
         if (!messageRepository.existsById(id)) {
-            throw new RuntimeException("Message non trouvé avec l'id: " + id);
+            throw new ResourceNotFoundException("Message", "id", id);
         }
         messageRepository.deleteById(id);
     }

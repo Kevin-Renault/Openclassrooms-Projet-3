@@ -2,7 +2,6 @@ package com.openclassrooms.projet3.excercice1.mapper;
 
 import com.openclassrooms.projet3.excercice1.dto.RentalDto;
 import com.openclassrooms.projet3.excercice1.entity.Rental;
-import com.openclassrooms.projet3.excercice1.entity.User;
 import org.springframework.stereotype.Component;
 
 @Component

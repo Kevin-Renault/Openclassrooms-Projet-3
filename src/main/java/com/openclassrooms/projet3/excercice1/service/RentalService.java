@@ -3,6 +3,7 @@ package com.openclassrooms.projet3.excercice1.service;
 import com.openclassrooms.projet3.excercice1.dto.RentalDto;
 import com.openclassrooms.projet3.excercice1.entity.Rental;
 import com.openclassrooms.projet3.excercice1.entity.User;
+import com.openclassrooms.projet3.excercice1.exception.ResourceNotFoundException;
 import com.openclassrooms.projet3.excercice1.mapper.RentalMapper;
 import com.openclassrooms.projet3.excercice1.repository.RentalRepository;
 import com.openclassrooms.projet3.excercice1.repository.UserRepository;
@@ -25,7 +26,7 @@ public class RentalService {
     public RentalDto create(RentalDto rentalDto) {
         User owner = userRepository.findById(rentalDto.getOwnerId())
                 .orElseThrow(
-                        () -> new RuntimeException("Propriétaire non trouvé avec l'id: " + rentalDto.getOwnerId()));
+                        () -> new ResourceNotFoundException("Utilisateur", "id", rentalDto.getOwnerId()));
 
         Rental rental = rentalMapper.toEntity(rentalDto);
         rental.setOwner(owner);
@@ -37,7 +38,7 @@ public class RentalService {
     @Transactional(readOnly = true)
     public RentalDto findById(Long id) {
         Rental rental = rentalRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Location non trouvée avec l'id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Location", "id", id));
         return rentalMapper.toDto(rental);
     }
 
@@ -57,13 +58,14 @@ public class RentalService {
 
     public RentalDto update(Long id, RentalDto rentalDto) {
         Rental rental = rentalRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Location non trouvée avec l'id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Location", "id", id));
 
+        // Vérifier si le propriétaire change
         if (rentalDto.getOwnerId() != null &&
                 !rental.getOwner().getId().equals(rentalDto.getOwnerId())) {
             User newOwner = userRepository.findById(rentalDto.getOwnerId())
                     .orElseThrow(
-                            () -> new RuntimeException("Propriétaire non trouvé avec l'id: " + rentalDto.getOwnerId()));
+                            () -> new ResourceNotFoundException("Utilisateur", "id", rentalDto.getOwnerId()));
             rental.setOwner(newOwner);
         }
 
@@ -74,7 +76,7 @@ public class RentalService {
 
     public void delete(Long id) {
         if (!rentalRepository.existsById(id)) {
-            throw new RuntimeException("Location non trouvée avec l'id: " + id);
+            throw new ResourceNotFoundException("Location", "id", id);
         }
         rentalRepository.deleteById(id);
     }
