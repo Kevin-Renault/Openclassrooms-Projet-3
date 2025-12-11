@@ -1,6 +1,6 @@
 # Excercice1 - Projet 3 OpenClassrooms
 
-Application Spring Boot pour la gestion de locations (ChaTop).
+Application Spring Boot pour la gestion de locations (ChaTop) avec authentification JWT.
 
 ## 📋 Prérequis
 
@@ -8,16 +8,18 @@ Application Spring Boot pour la gestion de locations (ChaTop).
 - **Maven** : Version 3.6+ (wrapper inclus dans le projet)
 - **MySQL** : Version 8.0+
 - **IDE** : VS Code, IntelliJ IDEA, Eclipse (recommandé : VS Code)
+- **Postman** : Pour tester l'API (collection fournie)
 
 ## 🔧 Technologies utilisées
 
 - **Spring Boot** : 4.0.1-SNAPSHOT
 - **Spring Data JPA** : Gestion de la persistance
-- **Spring Security** : Sécurisation de l'application
+- **Spring Security 7** : Sécurisation avec session STATELESS
 - **JWT (JSON Web Tokens)** : Authentification (jjwt 0.11.5)
 - **MySQL Connector** : Driver de base de données
 - **Lombok** : Réduction du code boilerplate
-- **Hibernate** : ORM (via JPA)
+- **Hibernate 7** : ORM (via JPA)
+- **Bean Validation** : Validation des données
 
 ## 📁 Structure du projet
 
@@ -26,11 +28,52 @@ excercice1/
 ├── src/
 │   ├── main/
 │   │   ├── java/com/openclassrooms/projet3/excercice1/
-│   │   │   ├── entity/          # Entités JPA (User, Rental, Message)
+│   │   │   ├── config/              # Configuration Spring
+│   │   │   │   ├── SecurityConfig.java
+│   │   │   │   ├── JwtAuthenticationFilter.java
+│   │   │   │   ├── LoggingFilter.java
+│   │   │   │   └── ValidationConstants.java
+│   │   │   ├── controller/          # Contrôleurs REST
+│   │   │   │   ├── AuthController.java
+│   │   │   │   ├── UserController.java
+│   │   │   │   ├── RentalController.java
+│   │   │   │   └── MessageController.java
+│   │   │   ├── dto/                 # Data Transfer Objects
+│   │   │   │   ├── UserDto.java
+│   │   │   │   ├── RentalDto.java
+│   │   │   │   ├── MessageDto.java
+│   │   │   │   ├── LoginRequest.java
+│   │   │   │   ├── RegisterRequest.java
+│   │   │   │   └── AuthResponse.java
+│   │   │   ├── entity/              # Entités JPA
+│   │   │   │   ├── User.java
+│   │   │   │   ├── Rental.java
+│   │   │   │   └── Message.java
+│   │   │   ├── exception/           # Gestion des erreurs
+│   │   │   │   ├── GlobalExceptionHandler.java
+│   │   │   │   ├── ResourceNotFoundException.java
+│   │   │   │   └── EmailAlreadyExistsException.java
+│   │   │   ├── mapper/              # Mappers Entity <-> DTO
+│   │   │   │   ├── UserMapper.java
+│   │   │   │   ├── RentalMapper.java
+│   │   │   │   └── MessageMapper.java
+│   │   │   ├── repository/          # Repositories JPA
+│   │   │   │   ├── UserRepository.java
+│   │   │   │   ├── RentalRepository.java
+│   │   │   │   └── MessageRepository.java
+│   │   │   ├── service/             # Services métier
+│   │   │   │   ├── AuthService.java
+│   │   │   │   ├── JwtService.java
+│   │   │   │   ├── CustomUserDetailsService.java
+│   │   │   │   ├── UserService.java
+│   │   │   │   ├── RentalService.java
+│   │   │   │   └── MessageService.java
 │   │   │   └── Excercice1Application.java
 │   │   └── resources/
-│   │       └── application.properties
+│   │       ├── application.properties
+│   │       └── ValidationMessages.properties
 │   └── test/
+├── Projet3-API-Locations.postman_collection.json
 ├── pom.xml
 └── README.md
 ```
@@ -41,12 +84,16 @@ excercice1/
 
 ```sql
 CREATE DATABASE chatop_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'kevin'@'localhost' IDENTIFIED BY 'votre_mot_de_passe';
-GRANT ALL PRIVILEGES ON chatop_db.* TO 'kevin'@'localhost';
+CREATE USER 'votre_utilisateur_db'@'localhost' IDENTIFIED BY 'votre_mot_de_passe';
+GRANT SELECT, INSERT, UPDATE, DELETE ON chatop_db.* TO 'votre_utilisateur_db'@'localhost';
 FLUSH PRIVILEGES;
 ```
 
-### 2. Configurer la variable d'environnement
+> ⚠️ **Note** : L'utilisateur de base de données n'a que les privilèges CRUD (pas de ALTER, DROP, etc.)
+
+### 2. Configurer les variables d'environnement
+
+#### DB_PASSWORD (obligatoire)
 
 **Windows (PowerShell)** :
 ```powershell
@@ -63,24 +110,47 @@ setx DB_PASSWORD "votre_mot_de_passe"
 export DB_PASSWORD="votre_mot_de_passe"
 ```
 
-> ⚠️ **Important** : Redémarrez votre terminal après avoir défini la variable d'environnement système.
+#### JWT_SECRET (optionnel - valeur par défaut fournie)
 
-### 3. Configuration actuelle (application.properties)
+**Windows (PowerShell)** :
+```powershell
+[System.Environment]::SetEnvironmentVariable('JWT_SECRET', 'votre_cle_secrete_base64', 'User')
+```
+
+> ⚠️ **Important** : Redémarrez votre terminal après avoir défini les variables d'environnement système.
+
+### 3. Configuration (application.properties)
 
 ```properties
+# Server
+server.port=3001
+
+# Base de données
 spring.datasource.url=jdbc:mysql://localhost:3306/chatop_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-spring.datasource.username=kevin
+spring.datasource.username=votre_utilisateur_db
 spring.datasource.password=${DB_PASSWORD}
-spring.jpa.hibernate.ddl-auto=update
+spring.jpa.hibernate.ddl-auto=none
 spring.jpa.show-sql=true
+
+# JWT
+jwt.secret=${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+jwt.expiration=86400000
+
+# Logging
+logging.level.com.openclassrooms.projet3.excercice1.config.LoggingFilter=INFO
 ```
+
+**Notes** :
+- `ddl-auto=none` : Pas de modification automatique du schéma (utilisateur sans privilèges ALTER)
+- `jwt.expiration=86400000` : Token valide 24 heures (en millisecondes)
+- Une clé secrète JWT par défaut est fournie (à changer en production)
 
 ## 🚀 Installation et démarrage
 
 ### 1. Cloner ou télécharger le projet
 
 ```bash
-cd c:\StarsheepStudio\Professionel\OpenClassrooms\Projet3\excercice1
+cd c:\StarsheepStudio\Professionel\OpenClassrooms\Projet-3
 ```
 
 ### 2. Vérifier que MySQL est démarré
@@ -98,12 +168,17 @@ Get-Service MySQL*
 
 ### 4. Lancer l'application
 
-**Option 1 : Avec Maven Wrapper** (recommandé)
+**Option 1 : Mode normal avec Maven**
 ```powershell
 .\mvnw.cmd spring-boot:run
 ```
 
-**Option 2 : Avec Java directement**
+**Option 2 : Mode debug dans VS Code**
+- Placez vos points d'arrêt dans le code
+- Appuyez sur **F5** ou allez dans **Run > Start Debugging**
+- Le debugger s'arrêtera sur vos breakpoints
+
+**Option 3 : Avec JAR exécutable**
 ```powershell
 .\mvnw.cmd package
 java -jar target\excercice1-0.0.1-SNAPSHOT.jar
@@ -111,17 +186,149 @@ java -jar target\excercice1-0.0.1-SNAPSHOT.jar
 
 ### 5. Vérifier le démarrage
 
-L'application démarre par défaut sur le port **8080**.
+L'application démarre sur le port **3001** (configuré pour l'IHM frontend).
 
 ```
-Console : http://localhost:8080
+URL API : http://localhost:3001
+URL IHM : http://localhost:3001 (frontend)
 ```
 
-Si Tomcat démarre correctement, vous verrez :
+Si Tomcat démarre correctement :
 ```
-Tomcat started on port 8080 (http)
+Tomcat started on port 3001 (http)
 Started Excercice1Application in X.XXX seconds
 ```
+
+> 📌 **Note** : Le port 3001 est utilisé au lieu de 8080 pour correspondre à la configuration de l'IHM frontend.
+
+## 🔐 Authentification JWT
+
+### Workflow d'authentification
+
+1. **Inscription** : `POST /api/auth/register` → Reçoit un token JWT
+2. **Connexion** : `POST /api/auth/login` → Reçoit un token JWT
+3. **Requêtes protégées** : Ajouter le header `Authorization: Bearer {token}`
+4. **Info utilisateur** : `GET /api/auth/me` → Retourne les données de l'utilisateur connecté
+
+### Endpoints d'authentification
+
+#### POST /api/auth/register
+Créer un nouveau compte utilisateur.
+
+**Body (JSON)** :
+```json
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "motdepasse123"
+}
+```
+
+**Réponse (201 Created)** :
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "type": "Bearer",
+  "user": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john.doe@example.com",
+    "createdAt": "2025-12-11T21:00:00",
+    "updatedAt": "2025-12-11T21:00:00"
+  }
+}
+```
+
+#### POST /api/auth/login
+Se connecter avec un compte existant.
+
+**Body (JSON)** :
+```json
+{
+  "email": "john.doe@example.com",
+  "password": "motdepasse123"
+}
+```
+
+**Réponse (200 OK)** :
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "type": "Bearer",
+  "user": { ... }
+}
+```
+
+#### GET /api/auth/me
+Récupérer les informations de l'utilisateur connecté.
+
+**Headers** :
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+**Réponse (200 OK)** :
+```json
+{
+  "id": 1,
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "createdAt": "2025-12-11T21:00:00",
+  "updatedAt": "2025-12-11T21:00:00"
+}
+```
+
+## 📡 API Endpoints
+
+### Routes publiques (sans authentification)
+- `POST /api/auth/register` - Inscription
+- `POST /api/auth/login` - Connexion
+
+### Routes protégées (authentification requise)
+
+#### Users
+- `GET /api/users` - Liste des utilisateurs
+- `GET /api/users/{id}` - Détails d'un utilisateur
+- `POST /api/users` - Créer un utilisateur
+- `PUT /api/users/{id}` - Modifier un utilisateur
+- `DELETE /api/users/{id}` - Supprimer un utilisateur
+
+#### Rentals
+- `GET /api/rentals` - Liste des locations
+- `GET /api/rentals/{id}` - Détails d'une location
+- `GET /api/rentals/owner/{ownerId}` - Locations par propriétaire
+- `POST /api/rentals` - Créer une location (multipart/form-data)
+- `PUT /api/rentals/{id}` - Modifier une location
+- `DELETE /api/rentals/{id}` - Supprimer une location
+
+#### Messages
+- `GET /api/messages` - Liste des messages
+- `GET /api/messages/{id}` - Détails d'un message
+- `POST /api/messages` - Envoyer un message
+- `DELETE /api/messages/{id}` - Supprimer un message
+
+### Exemple de requête avec token
+
+```bash
+curl -X GET http://localhost:3001/api/auth/me \
+  -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+## 📮 Collection Postman
+
+Une collection Postman complète est fournie : `Projet3-API-Locations.postman_collection.json`
+
+**Fonctionnalités** :
+- Dossier Authentication avec Register et Login
+- **Auto-sauvegarde du token JWT** dans les variables de collection et d'environnement
+- Tous les endpoints protégés utilisent automatiquement le token sauvegardé
+- Scripts de tests intégrés
+
+**Import** :
+1. Ouvrir Postman
+2. File > Import
+3. Sélectionner `Projet3-API-Locations.postman_collection.json`
+4. Le token sera automatiquement sauvegardé après register/login
 
 ## 🧪 Tests
 
@@ -141,15 +348,39 @@ Créer un fichier JAR exécutable :
 
 Le fichier JAR sera généré dans : `target/excercice1-0.0.1-SNAPSHOT.jar`
 
+## 🏗️ Architecture
+
+L'application suit une architecture en couches :
+
+```
+Controller → Service → Repository → Entity
+     ↓          ↓          ↓
+    DTO ← Mapper ← Entity
+```
+
+**Couches** :
+- **Controller** : Endpoints REST, validation des requêtes
+- **Service** : Logique métier, transactions
+- **Repository** : Accès aux données (JPA)
+- **Entity** : Modèle de données (tables MySQL)
+- **DTO** : Objets de transfert (API ↔ Client)
+- **Mapper** : Conversion Entity ↔ DTO
+
+**Sécurité** :
+- **JwtAuthenticationFilter** : Validation des tokens avant chaque requête
+- **LoggingFilter** : Logs des requêtes/réponses (debug)
+- **SecurityConfig** : Configuration Spring Security 7
+- **CustomUserDetailsService** : Chargement des utilisateurs
+
 ## 🐛 Résolution des problèmes courants
 
 ### Erreur : "Public Key Retrieval is not allowed"
 
-✅ **Solution** : Le paramètre `allowPublicKeyRetrieval=true` est déjà ajouté dans l'URL de connexion.
+✅ **Solution** : Le paramètre `allowPublicKeyRetrieval=true` est déjà dans l'URL.
 
 ### Erreur : "class file has wrong version"
 
-✅ **Solution** : Vérifiez que vous utilisez Java 17+ :
+✅ **Solution** : Vérifiez Java 17+ :
 ```powershell
 java -version
 ```
@@ -157,28 +388,140 @@ java -version
 ### Erreur : "Access denied for user"
 
 ✅ **Solution** : Vérifiez que :
-1. La variable `DB_PASSWORD` est correctement définie
-2. L'utilisateur MySQL `kevin` existe avec les bons droits
-3. Le mot de passe est correct
+1. La variable `DB_PASSWORD` est définie
+2. L'utilisateur MySQL existe avec les bons droits (SELECT, INSERT, UPDATE, DELETE)
+3. Le nom d'utilisateur et mot de passe correspondent à votre configuration
+4. `spring.datasource.username` dans `application.properties` correspond à votre utilisateur MySQL
 
-### L'application ne démarre pas
+### Erreur : "ALTER command denied"
 
-1. Vérifiez que MySQL est en cours d'exécution
-2. Vérifiez que le port 8080 n'est pas déjà utilisé
-3. Consultez les logs dans la console
+✅ **Solution** : Normal ! L'utilisateur de base de données n'a que les droits CRUD. Assurez-vous que `spring.jpa.hibernate.ddl-auto=none` dans `application.properties`.
 
-## 📝 Entités disponibles
+### Port 3001 déjà utilisé
 
-- **User** : Utilisateurs de l'application
-- **Rental** : Locations disponibles
-- **Message** : Messages entre utilisateurs
+✅ **Solution** :
+```powershell
+# Trouver et arrêter le processus
+Get-Process -Id (Get-NetTCPConnection -LocalPort 3001).OwningProcess | Stop-Process -Force
+```
+
+> 💡 **Changer le port** : Modifier `server.port` dans `application.properties` si le port 3001 est occupé.
+
+### Token JWT expiré (401 Unauthorized)
+
+✅ **Solution** : Re-connectez-vous avec `/api/auth/login` pour obtenir un nouveau token (durée : 24h).
+
+### Erreur : "Content-Type multipart/form-data is not supported"
+
+✅ **Solution** : Pour `POST /api/rentals`, utilisez `multipart/form-data` avec des champs séparés (`name`, `surface`, `price`, `picture`, `description`, `owner_id`).
+
+## 🔍 Debugging
+
+### LoggingFilter
+
+Le `LoggingFilter` affiche automatiquement dans les logs :
+- 📥 Méthode et URI de la requête
+- 📨 Body de la requête (JSON formaté)
+- 📨 Paramètres de la requête (multipart)
+- 📤 Status code de la réponse
+- 📋 Body de la réponse (JSON formaté)
+
+**Exemple de log** :
+```
+📥 Requête: POST /api/auth/login - Content-Type: application/json
+📨 Request Body:
+{
+  "email" : "john@example.com",
+  "password" : "password123"
+}
+📤 Réponse: POST /api/auth/login - Status: 200
+📋 Response Body:
+{
+  "token" : "eyJhbGci...",
+  "type" : "Bearer"
+}
+```
+
+### Mode Debug VS Code
+
+1. Placez des breakpoints en cliquant dans la marge gauche
+2. Appuyez sur **F5**
+3. L'application démarre et s'arrête sur vos points d'arrêt
+4. Utilisez les contrôles de debug (F10 = step over, F11 = step into)
+
+## 📝 Entités et modèles
+
+### User
+```java
+- id: Long
+- name: String (max 255)
+- email: String (unique, max 255)
+- password: String (encodé BCrypt)
+- createdAt: LocalDateTime
+- updatedAt: LocalDateTime
+```
+
+### Rental
+```java
+- id: Long
+- name: String (max 255)
+- surface: Integer (positif)
+- price: Integer (positif)
+- picture: String (URL, max 500)
+- description: String (max 2000)
+- ownerId: Long (référence User)
+- createdAt: LocalDateTime
+- updatedAt: LocalDateTime
+```
+
+### Message
+```java
+- id: Long
+- rentalId: Long (référence Rental)
+- userId: Long (référence User)
+- message: String (max 2000)
+- createdAt: LocalDateTime
+- updatedAt: LocalDateTime
+```
+
+## ✅ Validation des données
+
+**Constantes de validation** (`ValidationConstants.java`) :
+- Noms, emails : max 255 caractères
+- Descriptions, messages : max 2000 caractères
+- Pictures : max 500 caractères
+- Passwords : min 8 caractères
+
+**Messages personnalisés** : `ValidationMessages.properties`
+
+Les erreurs de validation retournent un status **400 Bad Request** avec détails.
 
 ## 🔐 Sécurité
 
-L'application utilise :
-- **Spring Security** pour la sécurisation des endpoints
-- **JWT** pour l'authentification stateless
-- **Variable d'environnement** pour le mot de passe de la base de données
+### Configuration
+- **Session** : STATELESS (pas de session HTTP, pas de cookies)
+- **CSRF** : Désactivé (API REST avec JWT)
+- **Password** : Encodage BCrypt
+- **Token JWT** : HS256, expiration 24h
+
+### Routes publiques
+- `/api/auth/**` (register, login)
+- `/swagger-ui/**`, `/v3/api-docs/**`
+
+### Routes protégées
+- Toutes les autres routes nécessitent `Authorization: Bearer {token}`
+
+### Filtres de sécurité (ordre d'exécution)
+1. **LoggingFilter** : Logs des requêtes/réponses
+2. **JwtAuthenticationFilter** : Validation du token JWT
+3. **UsernamePasswordAuthenticationFilter** : Filtre Spring Security par défaut
+
+## 🚧 Limitations connues
+
+- **Upload de fichiers** : Le endpoint `POST /api/rentals` accepte `multipart/form-data` mais la gestion du fichier `picture` n'est pas encore implémentée (TODO)
+- **Refresh token** : Pas de mécanisme de rafraîchissement automatique du token (expiration fixe 24h)
+- **Roles/Authorities** : Pas de gestion des rôles utilisateur (tous les utilisateurs ont les mêmes droits)
+- **Pagination** : Les listes (`GET /api/rentals`, etc.) ne sont pas paginées
 
 ## 📄 Licence
 
@@ -190,4 +533,5 @@ Kevin Renault
 
 ---
 
-**Note** : Ce projet est en cours de développement. Les endpoints REST et la documentation API seront ajoutés prochainement.
+**Version** : 0.0.1-SNAPSHOT  
+**Dernière mise à jour** : Décembre 2025
