@@ -1,6 +1,7 @@
 package com.openclassrooms.projet3.excercice1.service;
 
 import com.openclassrooms.projet3.excercice1.dto.UserDto;
+import com.openclassrooms.projet3.excercice1.dto.UserRegistrationDto;
 import com.openclassrooms.projet3.excercice1.entity.User;
 import com.openclassrooms.projet3.excercice1.exception.ResourceAlreadyExistsException;
 import com.openclassrooms.projet3.excercice1.exception.ResourceNotFoundException;
@@ -23,7 +24,7 @@ public class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public UserDto create(UserDto userDto) {
+    public UserDto create(UserRegistrationDto userDto) {
         if (userRepository.existsByEmail(userDto.getEmail())) {
             throw new ResourceAlreadyExistsException("Utilisateur", "email", userDto.getEmail());
         }

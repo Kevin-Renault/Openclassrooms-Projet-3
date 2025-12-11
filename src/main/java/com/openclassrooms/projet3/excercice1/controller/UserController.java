@@ -1,6 +1,7 @@
 package com.openclassrooms.projet3.excercice1.controller;
 
 import com.openclassrooms.projet3.excercice1.dto.UserDto;
+import com.openclassrooms.projet3.excercice1.dto.UserRegistrationDto;
 import com.openclassrooms.projet3.excercice1.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<UserDto> create(@Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<UserDto> create(@Valid @RequestBody UserRegistrationDto userDto) {
         UserDto createdUser = userService.create(userDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
