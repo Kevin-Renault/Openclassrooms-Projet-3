@@ -5,8 +5,10 @@ import com.openclassrooms.projet3.excercice1.service.RentalService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -17,8 +19,24 @@ public class RentalController {
 
     private final RentalService rentalService;
 
-    @PostMapping
-    public ResponseEntity<RentalDto> create(@Valid @RequestBody RentalDto rentalDto) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<RentalDto> create(
+            @RequestParam("name") String name,
+            @RequestParam("surface") Integer surface,
+            @RequestParam("price") Integer price,
+            @RequestParam(value = "picture", required = false) MultipartFile picture,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam("owner_id") Long ownerId) {
+
+        RentalDto rentalDto = new RentalDto();
+        rentalDto.setName(name);
+        rentalDto.setSurface(surface);
+        rentalDto.setPrice(price);
+        rentalDto.setDescription(description);
+        rentalDto.setOwnerId(ownerId);
+
+        // TODO: Gérer l'upload du fichier picture
+
         RentalDto createdRental = rentalService.create(rentalDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdRental);
     }
