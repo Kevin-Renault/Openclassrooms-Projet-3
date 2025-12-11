@@ -1,5 +1,6 @@
 package com.openclassrooms.projet3.excercice1.dto;
 
+import com.openclassrooms.projet3.excercice1.config.ValidationConstants;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 public class UserRegistrationDto extends UserDto {
 
-    @NotBlank(message = "Le mot de passe est obligatoire")
-    @Size(min = 8, message = "Le mot de passe doit contenir au moins 8 caractères")
+    @NotBlank
+    @Size(min = ValidationConstants.PASSWORD_MIN_SIZE)
     private String password;
 }

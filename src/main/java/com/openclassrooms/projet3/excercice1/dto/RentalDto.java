@@ -1,5 +1,6 @@
 package com.openclassrooms.projet3.excercice1.dto;
 
+import com.openclassrooms.projet3.excercice1.config.ValidationConstants;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,31 +20,31 @@ public class RentalDto {
 
     private Long id;
 
-    @NotBlank(message = "Le nom est obligatoire")
-    @Size(max = 255, message = "Le nom ne peut pas dépasser 255 caractères")
+    @NotBlank
+    @Size(max = ValidationConstants.NAME_MAX_SIZE)
     private String name;
 
-    @NotNull(message = "La surface est obligatoire")
-    @Positive(message = "La surface doit être positive")
+    @NotNull
+    @Positive
     private Integer surface;
 
-    @NotNull(message = "Le prix est obligatoire")
-    @Positive(message = "Le prix doit être positif")
+    @NotNull
+    @Positive
     private Integer price;
 
-    @Size(max = 1000, message = "L'URL de l'image ne peut pas dépasser 1000 caractères")
+    @Size(max = ValidationConstants.PICTURE_MAX_SIZE)
     private String picture;
 
-    @Size(max = 2000, message = "La description ne peut pas dépasser 2000 caractères")
+    @Size(max = ValidationConstants.DESCRIPTION_MAX_SIZE)
     private String description;
 
-    @NotNull(message = "L'ID du propriétaire est obligatoire")
-    @Positive(message = "L'ID du propriétaire doit être positif")
+    @NotNull
+    @Positive
     private Long ownerId;
 
-    @PastOrPresent(message = "La date de création ne peut pas être dans le futur")
+    @PastOrPresent
     private LocalDateTime createdAt;
 
-    @PastOrPresent(message = "La date de mise à jour ne peut pas être dans le futur")
+    @PastOrPresent
     private LocalDateTime updatedAt;
 }

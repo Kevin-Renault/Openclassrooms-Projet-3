@@ -1,5 +1,6 @@
 package com.openclassrooms.projet3.excercice1.dto;
 
+import com.openclassrooms.projet3.excercice1.config.ValidationConstants;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,21 +20,21 @@ public class MessageDto {
 
     private Long id;
 
-    @NotNull(message = "L'ID de la location est obligatoire")
-    @Positive(message = "L'ID de la location doit être positif")
+    @NotNull
+    @Positive
     private Long rentalId;
 
-    @NotNull(message = "L'ID de l'utilisateur est obligatoire")
-    @Positive(message = "L'ID de l'utilisateur doit être positif")
+    @NotNull
+    @Positive
     private Long userId;
 
-    @NotBlank(message = "Le message est obligatoire")
-    @Size(max = 2000, message = "Le message ne peut pas dépasser 2000 caractères")
+    @NotBlank
+    @Size(max = ValidationConstants.MESSAGE_MAX_SIZE)
     private String message;
 
-    @PastOrPresent(message = "La date de création ne peut pas être dans le futur")
+    @PastOrPresent
     private LocalDateTime createdAt;
 
-    @PastOrPresent(message = "La date de mise à jour ne peut pas être dans le futur")
+    @PastOrPresent
     private LocalDateTime updatedAt;
 }

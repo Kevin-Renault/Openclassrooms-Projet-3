@@ -20,7 +20,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Jean Dupont\",\n  \"email\": \"jean.dupont@example.com\"\n}"
+							"raw": "{\n  \"name\": \"Jean Dupont\",\n  \"email\": \"jean.dupont@example.com\",\n  \"password\": \"motdepasse123\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/users",
@@ -448,7 +448,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Marie Propriétaire\",\n  \"email\": \"marie.proprio@example.com\"\n}"
+							"raw": "{\n  \"name\": \"Marie Propriétaire\",\n  \"email\": \"marie.proprio@example.com\",\n  \"password\": \"password123\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/users",
@@ -475,7 +475,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Pierre Locataire\",\n  \"email\": \"pierre.locataire@example.com\"\n}"
+							"raw": "{\n  \"name\": \"Pierre Locataire\",\n  \"email\": \"pierre.locataire@example.com\",\n  \"password\": \"password456\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/users",
