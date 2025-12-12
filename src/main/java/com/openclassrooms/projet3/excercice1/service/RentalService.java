@@ -10,6 +10,7 @@ import com.openclassrooms.projet3.excercice1.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,11 +23,18 @@ public class RentalService {
     private final RentalRepository rentalRepository;
     private final UserRepository userRepository;
     private final RentalMapper rentalMapper;
+    private final FileStorageService fileStorageService;
 
-    public RentalDto create(RentalDto rentalDto) {
+    public RentalDto create(RentalDto rentalDto, MultipartFile picture) {
         User owner = userRepository.findById(rentalDto.getOwnerId())
                 .orElseThrow(
                         () -> new ResourceNotFoundException("Utilisateur", "id", rentalDto.getOwnerId()));
+
+        // Sauvegarder l'image si elle existe
+        if (picture != null && !picture.isEmpty()) {
+            String pictureUrl = fileStorageService.saveFile(picture);
+            rentalDto.setPicture(pictureUrl);
+        }
 
         Rental rental = rentalMapper.toEntity(rentalDto);
         rental.setOwner(owner);

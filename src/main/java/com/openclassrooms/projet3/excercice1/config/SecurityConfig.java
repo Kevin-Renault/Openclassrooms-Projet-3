@@ -32,6 +32,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Routes publiques
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/uploads/pictures/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         // Toutes les autres routes nécessitent une authentification
                         .anyRequest().authenticated())

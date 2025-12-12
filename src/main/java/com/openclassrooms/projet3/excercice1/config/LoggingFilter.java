@@ -1,6 +1,7 @@
 package com.openclassrooms.projet3.excercice1.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.Part;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -11,8 +12,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -41,6 +45,33 @@ public class LoggingFilter extends OncePerRequestFilter {
             log.info("📨 Request Parameters: {}", params.toString().trim());
         }
 
+        // Pour multipart/form-data, afficher les champs non-binaires
+        if (contentType != null && contentType.contains("multipart/form-data")) {
+            try {
+                StringBuilder multipartData = new StringBuilder();
+                for (Part part : request.getParts()) {
+                    String partName = part.getName();
+                    String fileName = part.getSubmittedFileName();
+
+                    if (fileName != null) {
+                        // C'est un fichier
+                        multipartData.append(String.format("  %s: [FILE: %s, size: %d bytes, type: %s]\n",
+                                partName, fileName, part.getSize(), part.getContentType()));
+                    } else {
+                        // C'est un champ texte
+                        try (BufferedReader reader = new BufferedReader(
+                                new InputStreamReader(part.getInputStream(), StandardCharsets.UTF_8))) {
+                            String value = reader.lines().collect(Collectors.joining("\n"));
+                            multipartData.append(String.format("  %s: %s\n", partName, value));
+                        }
+                    }
+                }
+                log.info("📨 Multipart Form Data:\n{}", multipartData.toString());
+            } catch (Exception e) {
+                log.warn("⚠️ Impossible de lire les parts multipart: {}", e.getMessage());
+            }
+        }
+
         // Exécuter la chaîne de filtres
         filterChain.doFilter(requestWrapper, responseWrapper);
 
@@ -57,8 +88,6 @@ public class LoggingFilter extends OncePerRequestFilter {
                     log.info("📨 Request Body: {}", requestBody);
                 }
             }
-        } else if (contentType != null && contentType.contains("multipart/form-data")) {
-            log.info("📨 Request Body: [multipart/form-data - cannot be logged]");
         }
 
         // Logger la réponse
