@@ -16,6 +16,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * Configuration de la sécurité de l'application.
+ * Définit les règles d'authentification, d'autorisation et les filtres de
+ * sécurité.
+ * 
+ * @author Kévin Renault
+ */
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -25,6 +32,14 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
     private final LoggingFilter loggingFilter;
 
+    /**
+     * Configure la chaîne de filtres de sécurité Spring Security.
+     * Définit les routes publiques et privées, et configure JWT.
+     * 
+     * @param http L'objet HttpSecurity à configurer
+     * @return La chaîne de filtres de sécurité configurée
+     * @throws Exception En cas d'erreur de configuration
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -45,11 +60,22 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Bean pour l'encodage des mots de passe avec BCrypt.
+     * 
+     * @return Un encodeur de mot de passe BCrypt
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Bean pour le fournisseur d'authentification.
+     * Configure l'authentification avec UserDetailsService et BCrypt.
+     * 
+     * @return Le fournisseur d'authentification configuré
+     */
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -58,6 +84,13 @@ public class SecurityConfig {
         return authProvider;
     }
 
+    /**
+     * Bean pour le gestionnaire d'authentification.
+     * 
+     * @param config La configuration d'authentification Spring
+     * @return Le gestionnaire d'authentification
+     * @throws Exception En cas d'erreur de récupération du manager
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

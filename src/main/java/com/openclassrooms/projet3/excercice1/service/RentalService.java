@@ -15,6 +15,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service de gestion des locations immobilières.
+ * Fournit les opérations CRUD pour les annonces de location.
+ * 
+ * @author Kévin Renault
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -25,6 +31,15 @@ public class RentalService {
     private final RentalMapper rentalMapper;
     private final FileStorageService fileStorageService;
 
+    /**
+     * Crée une nouvelle annonce de location.
+     * Gère également l'upload de l'image associée si présente.
+     * 
+     * @param rentalDto Les données de la location à créer
+     * @param picture   L'image de la location (optionnel)
+     * @return Les données de la location créée avec l'URL de l'image
+     * @throws ResourceNotFoundException Si le propriétaire n'existe pas
+     */
     public RentalDto create(RentalDto rentalDto, MultipartFile picture) {
         User owner = userRepository.findById(rentalDto.getOwnerId())
                 .orElseThrow(
@@ -43,6 +58,13 @@ public class RentalService {
         return rentalMapper.toDto(savedRental);
     }
 
+    /**
+     * Recherche une location par son identifiant.
+     * 
+     * @param id L'identifiant de la location
+     * @return Les données de la location trouvée
+     * @throws ResourceNotFoundException Si la location n'existe pas
+     */
     @Transactional(readOnly = true)
     public RentalDto findById(Long id) {
         Rental rental = rentalRepository.findById(id)
@@ -50,6 +72,11 @@ public class RentalService {
         return rentalMapper.toDto(rental);
     }
 
+    /**
+     * Récupère la liste de toutes les locations.
+     * 
+     * @return Liste de toutes les locations disponibles
+     */
     @Transactional(readOnly = true)
     public List<RentalDto> findAll() {
         return rentalRepository.findAll().stream()
@@ -57,6 +84,12 @@ public class RentalService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Récupère toutes les locations appartenant à un propriétaire spécifique.
+     * 
+     * @param ownerId L'identifiant du propriétaire
+     * @return Liste des locations du propriétaire
+     */
     @Transactional(readOnly = true)
     public List<RentalDto> findByOwnerId(Long ownerId) {
         return rentalRepository.findByOwnerId(ownerId).stream()
@@ -64,6 +97,16 @@ public class RentalService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Met à jour les informations d'une location.
+     * Permet également de changer le propriétaire si nécessaire.
+     * 
+     * @param id        L'identifiant de la location à modifier
+     * @param rentalDto Les nouvelles données de la location
+     * @return Les données de la location mise à jour
+     * @throws ResourceNotFoundException Si la location ou le nouveau propriétaire
+     *                                   n'existe pas
+     */
     public RentalDto update(Long id, RentalDto rentalDto) {
         Rental rental = rentalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Location", "id", id));
@@ -82,6 +125,12 @@ public class RentalService {
         return rentalMapper.toDto(updatedRental);
     }
 
+    /**
+     * Supprime une location du système.
+     * 
+     * @param id L'identifiant de la location à supprimer
+     * @throws ResourceNotFoundException Si la location n'existe pas
+     */
     public void delete(Long id) {
         if (!rentalRepository.existsById(id)) {
             throw new ResourceNotFoundException("Location", "id", id);

@@ -14,6 +14,12 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
+/**
+ * Service de gestion du stockage des fichiers (images de locations).
+ * Gère l'upload, la suppression et le nommage des fichiers.
+ * 
+ * @author Kévin Renault
+ */
 @Slf4j
 @Service
 public class FileStorageService {
@@ -26,6 +32,12 @@ public class FileStorageService {
 
     private Path fileStorageLocation;
 
+    /**
+     * Initialise le répertoire de stockage au démarrage de l'application.
+     * Crée le répertoire s'il n'existe pas.
+     * 
+     * @throws RuntimeException Si le répertoire ne peut pas être créé
+     */
     @PostConstruct
     public void init() {
         this.fileStorageLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
@@ -38,7 +50,15 @@ public class FileStorageService {
     }
 
     /**
-     * Sauvegarde un fichier et retourne l'URL relative
+     * Sauvegarde un fichier et retourne l'URL complète.
+     * Génère un nom unique avec UUID pour éviter les collisions.
+     * 
+     * @param file Le fichier à sauvegarder
+     * @return L'URL absolue du fichier sauvegardé, ou null si le fichier est vide
+     * @throws IllegalArgumentException Si le nom de fichier contient des caractères
+     *                                  invalides
+     * @throws RuntimeException         Si une erreur d'I/O survient lors de la
+     *                                  sauvegarde
      */
     public String saveFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {
@@ -72,7 +92,10 @@ public class FileStorageService {
     }
 
     /**
-     * Supprime un fichier à partir de son URL
+     * Supprime un fichier à partir de son URL.
+     * Extrait le nom de fichier de l'URL et le supprime du système de fichiers.
+     * 
+     * @param fileUrl L'URL complète du fichier à supprimer
      */
     public void deleteFile(String fileUrl) {
         if (fileUrl == null || fileUrl.isEmpty()) {
@@ -90,6 +113,13 @@ public class FileStorageService {
         }
     }
 
+    /**
+     * Extrait l'extension d'un nom de fichier.
+     * 
+     * @param filename Le nom complet du fichier
+     * @return L'extension du fichier (sans le point), ou chaîne vide si aucune
+     *         extension
+     */
     private String getFileExtension(String filename) {
         if (filename == null || !filename.contains(".")) {
             return "";

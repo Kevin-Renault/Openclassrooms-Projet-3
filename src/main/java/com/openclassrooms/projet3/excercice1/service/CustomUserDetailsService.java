@@ -10,12 +10,28 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
+/**
+ * Service personnalisé pour charger les détails d'un utilisateur depuis la base
+ * de données.
+ * Implémente UserDetailsService de Spring Security pour l'authentification.
+ * 
+ * @author Kévin Renault
+ */
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
+    /**
+     * Charge les détails d'un utilisateur par son email (utilisé comme username).
+     * Utilisé par Spring Security lors de l'authentification.
+     * 
+     * @param email L'adresse email de l'utilisateur
+     * @return Les détails de l'utilisateur au format UserDetails
+     * @throws UsernameNotFoundException Si aucun utilisateur n'est trouvé avec cet
+     *                                   email
+     */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)

@@ -16,6 +16,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * Service gérant l'authentification et l'inscription des utilisateurs.
+ * Gère la création de comptes, la connexion et la génération de tokens JWT.
+ * 
+ * @author Kévin Renault
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -28,6 +34,14 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final CustomUserDetailsService userDetailsService;
 
+    /**
+     * Enregistre un nouvel utilisateur dans le système.
+     * Vérifie l'unicité de l'email, hash le mot de passe et génère un token JWT.
+     * 
+     * @param request Les données d'inscription (nom, email, mot de passe)
+     * @return Une réponse contenant le token JWT et les données de l'utilisateur
+     * @throws ResourceAlreadyExistsException Si l'email existe déjà
+     */
     public AuthResponse register(RegisterRequest request) {
         // Vérifier si l'email existe déjà
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -50,6 +64,15 @@ public class AuthService {
         return new AuthResponse(jwtToken, userDto);
     }
 
+    /**
+     * Authentifie un utilisateur avec son email et mot de passe.
+     * Génère un nouveau token JWT en cas de succès.
+     * 
+     * @param request Les identifiants de connexion (email, mot de passe)
+     * @return Une réponse contenant le token JWT et les données de l'utilisateur
+     * @throws RuntimeException Si l'authentification échoue ou si l'utilisateur
+     *                          n'existe pas
+     */
     public AuthResponse login(LoginRequest request) {
         // Authentifier l'utilisateur
         authenticationManager.authenticate(
@@ -69,6 +92,15 @@ public class AuthService {
         return new AuthResponse(jwtToken, userDto);
     }
 
+    /**
+     * Récupère les informations de l'utilisateur actuellement connecté.
+     * Utilise le token JWT pour identifier l'utilisateur.
+     * 
+     * @param authentication L'objet d'authentification contenant l'email de
+     *                       l'utilisateur
+     * @return Les données de l'utilisateur connecté
+     * @throws RuntimeException Si l'utilisateur n'est pas trouvé
+     */
     @Transactional(readOnly = true)
     public UserDto getCurrentUser(Authentication authentication) {
         // L'email est dans le principal (username) du token JWT

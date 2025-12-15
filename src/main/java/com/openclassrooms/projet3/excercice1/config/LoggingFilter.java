@@ -18,12 +18,29 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
+/**
+ * Filtre de logging pour tracer toutes les requêtes et réponses HTTP.
+ * Enregistre les détails des requêtes (méthode, URI, paramètres, body) et des
+ * réponses (status, body).
+ * 
+ * @author Kévin Renault
+ */
 @Slf4j
 @Component
 public class LoggingFilter extends OncePerRequestFilter {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * Méthode principale du filtre exécutée pour chaque requête.
+     * Capture et log les détails de la requête et de la réponse.
+     * 
+     * @param request     La requête HTTP
+     * @param response    La réponse HTTP
+     * @param filterChain La chaîne de filtres à continuer
+     * @throws ServletException En cas d'erreur servlet
+     * @throws IOException      En cas d'erreur d'I/O
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {

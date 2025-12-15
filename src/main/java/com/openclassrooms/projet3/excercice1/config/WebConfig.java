@@ -8,12 +8,25 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * Configuration Web de l'application.
+ * Configure les gestionnaires de ressources statiques, notamment pour les
+ * fichiers uploadés.
+ * 
+ * @author Kévin Renault
+ */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
     @Value("${file.upload-dir:uploads/pictures}")
     private String uploadDir;
 
+    /**
+     * Configure les gestionnaires de ressources statiques.
+     * Permet de servir les fichiers uploadés via HTTP.
+     * 
+     * @param registry Le registre des gestionnaires de ressources
+     */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // Servir les fichiers depuis le dossier uploads

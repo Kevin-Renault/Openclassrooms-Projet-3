@@ -15,6 +15,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service de gestion des utilisateurs.
+ * Fournit les opérations CRUD et de gestion des comptes utilisateurs.
+ * 
+ * @author Kévin Renault
+ */
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -24,6 +30,15 @@ public class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * Crée un nouvel utilisateur dans le système.
+     * Le mot de passe est automatiquement hashé avant la sauvegarde.
+     * 
+     * @param userDto Les données de l'utilisateur à créer
+     * @return Les données de l'utilisateur créé
+     * @throws ResourceAlreadyExistsException Si un utilisateur existe déjà avec cet
+     *                                        email
+     */
     public UserDto create(UserRegistrationDto userDto) {
         if (userRepository.existsByEmail(userDto.getEmail())) {
             throw new ResourceAlreadyExistsException("Utilisateur", "email", userDto.getEmail());
@@ -36,6 +51,13 @@ public class UserService {
         return userMapper.toDto(savedUser);
     }
 
+    /**
+     * Recherche un utilisateur par son identifiant.
+     * 
+     * @param id L'identifiant de l'utilisateur
+     * @return Les données de l'utilisateur trouvé
+     * @throws ResourceNotFoundException Si l'utilisateur n'existe pas
+     */
     @Transactional(readOnly = true)
     public UserDto findById(Long id) {
         User user = userRepository.findById(id)
@@ -43,6 +65,13 @@ public class UserService {
         return userMapper.toDto(user);
     }
 
+    /**
+     * Recherche un utilisateur par son adresse email.
+     * 
+     * @param email L'adresse email de l'utilisateur
+     * @return Les données de l'utilisateur trouvé
+     * @throws ResourceNotFoundException Si l'utilisateur n'existe pas
+     */
     @Transactional(readOnly = true)
     public UserDto findByEmail(String email) {
         User user = userRepository.findByEmail(email)
@@ -50,6 +79,11 @@ public class UserService {
         return userMapper.toDto(user);
     }
 
+    /**
+     * Récupère la liste de tous les utilisateurs.
+     * 
+     * @return Liste de tous les utilisateurs
+     */
     @Transactional(readOnly = true)
     public List<UserDto> findAll() {
         return userRepository.findAll().stream()
@@ -57,6 +91,16 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Met à jour les informations d'un utilisateur.
+     * Note: Le mot de passe ne peut pas être modifié via cette méthode.
+     * 
+     * @param id      L'identifiant de l'utilisateur à modifier
+     * @param userDto Les nouvelles données de l'utilisateur
+     * @return Les données de l'utilisateur mis à jour
+     * @throws ResourceNotFoundException      Si l'utilisateur n'existe pas
+     * @throws ResourceAlreadyExistsException Si le nouvel email est déjà utilisé
+     */
     public UserDto update(Long id, UserDto userDto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "id", id));
@@ -75,6 +119,14 @@ public class UserService {
         return userMapper.toDto(updatedUser);
     }
 
+    /**
+     * Met à jour le mot de passe d'un utilisateur.
+     * Le nouveau mot de passe est automatiquement hashé.
+     * 
+     * @param id          L'identifiant de l'utilisateur
+     * @param newPassword Le nouveau mot de passe en clair
+     * @throws ResourceNotFoundException Si l'utilisateur n'existe pas
+     */
     public void updatePassword(Long id, String newPassword) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "id", id));
@@ -82,6 +134,12 @@ public class UserService {
         userRepository.save(user);
     }
 
+    /**
+     * Supprime un utilisateur du système.
+     * 
+     * @param id L'identifiant de l'utilisateur à supprimer
+     * @throws ResourceNotFoundException Si l'utilisateur n'existe pas
+     */
     public void delete(Long id) {
         if (!userRepository.existsById(id)) {
             throw new ResourceNotFoundException("Utilisateur", "id", id);
