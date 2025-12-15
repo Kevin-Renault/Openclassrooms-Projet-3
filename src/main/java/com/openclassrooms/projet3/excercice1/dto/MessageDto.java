@@ -1,6 +1,9 @@
 package com.openclassrooms.projet3.excercice1.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.openclassrooms.projet3.excercice1.config.ValidationConstants;
+import com.openclassrooms.projet3.excercice1.constants.FormatConstants;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,6 +37,7 @@ public class MessageDto {
      */
     @NotNull
     @Positive
+    @JsonProperty("rental_id")
     private Long rentalId;
 
     /**
@@ -41,6 +45,7 @@ public class MessageDto {
      */
     @NotNull
     @Positive
+    @JsonProperty("user_id")
     private Long userId;
 
     /**
@@ -54,11 +59,15 @@ public class MessageDto {
      * Date et heure de création du message.
      */
     @PastOrPresent
+    @JsonProperty("created_at")
+    @JsonFormat(pattern = FormatConstants.DISPLAY_DATE_FORMAT)
     private LocalDateTime createdAt;
 
     /**
      * Date et heure de la dernière mise à jour du message.
      */
     @PastOrPresent
+    @JsonProperty("updated_at")
+    @JsonFormat(pattern = FormatConstants.DISPLAY_DATE_FORMAT)
     private LocalDateTime updatedAt;
 }

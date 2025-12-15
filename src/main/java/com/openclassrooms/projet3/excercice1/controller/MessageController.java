@@ -1,7 +1,7 @@
 package com.openclassrooms.projet3.excercice1.controller;
 
-import com.openclassrooms.projet3.excercice1.constants.SecurityConstants;
 import com.openclassrooms.projet3.excercice1.dto.MessageDto;
+import com.openclassrooms.projet3.excercice1.dto.MessageResponse;
 import com.openclassrooms.projet3.excercice1.service.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -23,7 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/messages")
 @RequiredArgsConstructor
-@SecurityRequirement(name = SecurityConstants.BEARER_AUTH_SCHEME)
+@SecurityRequirement(name = "bearerAuth")
 public class MessageController {
 
     private final MessageService messageService;
@@ -36,8 +36,9 @@ public class MessageController {
      */
     @Operation(summary = "Envoyer un message", description = "Crée un nouveau message concernant une location")
     @PostMapping
-    public ResponseEntity<MessageDto> create(@Valid @RequestBody MessageDto messageDto) {
-        MessageDto createdMessage = messageService.create(messageDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdMessage);
+    public ResponseEntity<MessageResponse> create(@Valid @RequestBody MessageDto messageDto) {
+        messageService.create(messageDto);
+        MessageResponse message = new MessageResponse("Message send with success");
+        return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
 }

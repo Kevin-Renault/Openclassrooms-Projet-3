@@ -1,6 +1,9 @@
 package com.openclassrooms.projet3.excercice1.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.openclassrooms.projet3.excercice1.config.ValidationConstants;
+import com.openclassrooms.projet3.excercice1.constants.FormatConstants;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -67,17 +70,22 @@ public class RentalDto {
      */
     @NotNull
     @Positive
+    @JsonProperty("owner_id")
     private Long ownerId;
 
     /**
      * Date et heure de création de l'annonce.
      */
     @PastOrPresent
+    @JsonProperty("created_at")
+    @JsonFormat(pattern = FormatConstants.DISPLAY_DATE_FORMAT)
     private LocalDateTime createdAt;
 
     /**
      * Date et heure de la dernière mise à jour de l'annonce.
      */
     @PastOrPresent
+    @JsonProperty("updated_at")
+    @JsonFormat(pattern = FormatConstants.DISPLAY_DATE_FORMAT)
     private LocalDateTime updatedAt;
 }

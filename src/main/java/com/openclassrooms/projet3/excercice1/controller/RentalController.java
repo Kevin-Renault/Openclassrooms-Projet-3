@@ -97,13 +97,29 @@ public class RentalController {
     /**
      * Met à jour les informations d'une location.
      * 
-     * @param id        L'identifiant de la location à modifier
-     * @param rentalDto Les nouvelles données de la location
+     * @param id          L'identifiant de la location à modifier
+     * @param name        Nom de la location
+     * @param surface     Surface en mètres carrés
+     * @param price       Prix de la location
+     * @param picture     Image de la location (optionnel)
+     * @param description Description de la location (optionnel)
      * @return Une réponse HTTP 200 avec les données de la location mise à jour
      */
     @Operation(summary = "Modifier une location", description = "Met à jour les informations d'une location existante")
-    @PutMapping("/{id}")
-    public ResponseEntity<RentalDto> update(@PathVariable Long id, @Valid @RequestBody RentalDto rentalDto) {
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<RentalDto> update(
+            @PathVariable Long id,
+            @RequestParam("name") String name,
+            @RequestParam("surface") Integer surface,
+            @RequestParam("price") Integer price,
+            @RequestParam(value = "description", required = false) String description) {
+
+        RentalDto rentalDto = new RentalDto();
+        rentalDto.setName(name);
+        rentalDto.setSurface(surface);
+        rentalDto.setPrice(price);
+        rentalDto.setDescription(description);
+
         RentalDto updatedRental = rentalService.update(id, rentalDto);
         return ResponseEntity.ok(updatedRental);
     }

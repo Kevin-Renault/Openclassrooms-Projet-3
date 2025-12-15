@@ -102,27 +102,17 @@ public class RentalService {
 
     /**
      * Met à jour les informations d'une location.
-     * Permet également de changer le propriétaire si nécessaire.
+     * Permet également de changer l'image si une nouvelle est fournie.
      * 
      * @param id        L'identifiant de la location à modifier
      * @param rentalDto Les nouvelles données de la location
      * @return Les données de la location mise à jour
-     * @throws ResourceNotFoundException Si la location ou le nouveau propriétaire
-     *                                   n'existe pas
+     * @throws ResourceNotFoundException Si la location n'existe pas
      */
     public RentalDto update(Long id, RentalDto rentalDto) {
         Rental rental = rentalRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Location", "id", id));
-
-        // Vérifier si le propriétaire change
-        if (rentalDto.getOwnerId() != null &&
-                !rental.getOwner().getId().equals(rentalDto.getOwnerId())) {
-            User newOwner = userRepository.findById(rentalDto.getOwnerId())
-                    .orElseThrow(
-                            () -> new ResourceNotFoundException("Utilisateur", "id", rentalDto.getOwnerId()));
-            rental.setOwner(newOwner);
-        }
-
+                .orElseThrow(() -> new ResourceNotFoundException(EntityConstants.ENTITY_RENTAL,
+                        EntityConstants.FIELD_ID, id));
         rentalMapper.updateEntityFromDto(rentalDto, rental);
         Rental updatedRental = rentalRepository.save(rental);
         return rentalMapper.toDto(updatedRental);

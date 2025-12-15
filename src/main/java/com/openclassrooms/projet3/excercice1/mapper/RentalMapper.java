@@ -70,7 +70,8 @@ public class RentalMapper {
 
     /**
      * Met à jour une entité Rental existante avec les données d'un RentalDto.
-     * Ne modifie pas le propriétaire ni les dates.
+     * Ne modifie pas le propriétaire, les dates ni l'image (picture).
+     * L'image ne peut être définie qu'à la création.
      * 
      * @param dto    Le DTO contenant les nouvelles données
      * @param rental L'entité à mettre à jour
@@ -83,7 +84,8 @@ public class RentalMapper {
         rental.setName(dto.getName());
         rental.setSurface(dto.getSurface());
         rental.setPrice(dto.getPrice());
-        rental.setPicture(dto.getPicture());
         rental.setDescription(dto.getDescription());
+        // Note: picture n'est pas mis à jour - l'image ne peut être changée après
+        // création
     }
 }
