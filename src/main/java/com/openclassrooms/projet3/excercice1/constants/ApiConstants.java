@@ -15,6 +15,7 @@ public final class ApiConstants {
      * Routes publiques (accessibles sans authentification).
      */
     public static final String AUTH_PUBLIC_PATHS = "/api/auth/**";
+    public static final String MESSAGES_PUBLIC_PATHS = "/api/messages/**";
     public static final String UPLOADS_PUBLIC_PATHS = "/uploads/pictures/**";
     public static final String SWAGGER_PATHS = "/swagger-ui/**";
     public static final String API_DOCS_PATHS = "/v3/api-docs/**";

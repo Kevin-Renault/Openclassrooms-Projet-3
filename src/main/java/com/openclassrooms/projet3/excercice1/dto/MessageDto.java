@@ -3,6 +3,7 @@ package com.openclassrooms.projet3.excercice1.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.openclassrooms.projet3.excercice1.config.ValidationConstants;
+import com.openclassrooms.projet3.excercice1.constants.EntityConstants;
 import com.openclassrooms.projet3.excercice1.constants.FormatConstants;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,7 +38,7 @@ public class MessageDto {
      */
     @NotNull
     @Positive
-    @JsonProperty("rental_id")
+    @JsonProperty(EntityConstants.FIELD_RENTAL_ID)
     private Long rentalId;
 
     /**
@@ -45,7 +46,7 @@ public class MessageDto {
      */
     @NotNull
     @Positive
-    @JsonProperty("user_id")
+    @JsonProperty(EntityConstants.FIELD_USER_ID)
     private Long userId;
 
     /**

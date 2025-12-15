@@ -1,5 +1,8 @@
 package com.openclassrooms.projet3.excercice1.controller;
 
+import com.openclassrooms.projet3.excercice1.constants.ApiConstants;
+import com.openclassrooms.projet3.excercice1.constants.MessageConstants;
+import com.openclassrooms.projet3.excercice1.constants.SecurityConstants;
 import com.openclassrooms.projet3.excercice1.dto.MessageDto;
 import com.openclassrooms.projet3.excercice1.dto.MessageResponse;
 import com.openclassrooms.projet3.excercice1.service.MessageService;
@@ -11,8 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 /**
  * Contrôleur REST pour la gestion des messages.
  * Permet aux utilisateurs d'envoyer et de consulter des messages concernant les
@@ -21,9 +22,9 @@ import java.util.List;
  * @author Kévin Renault
  */
 @RestController
-@RequestMapping("/api/messages")
+@RequestMapping(ApiConstants.MESSAGES_PUBLIC_PATHS)
 @RequiredArgsConstructor
-@SecurityRequirement(name = "bearerAuth")
+@SecurityRequirement(name = SecurityConstants.BEARER_AUTH_SCHEME)
 public class MessageController {
 
     private final MessageService messageService;
@@ -38,7 +39,7 @@ public class MessageController {
     @PostMapping
     public ResponseEntity<MessageResponse> create(@Valid @RequestBody MessageDto messageDto) {
         messageService.create(messageDto);
-        MessageResponse message = new MessageResponse("Message send with success");
+        MessageResponse message = new MessageResponse(MessageConstants.MESSAGE_SENT_SUCCESS);
         return ResponseEntity.status(HttpStatus.CREATED).body(message);
     }
 }

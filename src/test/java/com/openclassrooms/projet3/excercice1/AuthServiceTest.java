@@ -1,7 +1,6 @@
 package com.openclassrooms.projet3.excercice1;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -17,10 +16,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.openclassrooms.projet3.excercice1.dto.AuthResponse;
 import com.openclassrooms.projet3.excercice1.dto.LoginRequest;
 import com.openclassrooms.projet3.excercice1.dto.RegisterRequest;
 import com.openclassrooms.projet3.excercice1.entity.User;

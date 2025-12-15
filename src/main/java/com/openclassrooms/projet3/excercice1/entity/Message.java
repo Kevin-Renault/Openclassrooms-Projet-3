@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.openclassrooms.projet3.excercice1.constants.EntityConstants;
+
 import java.time.LocalDateTime;
 
 /**
@@ -34,14 +36,14 @@ public class Message {
      * Location concernée par ce message.
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "rental_id", nullable = false)
+    @JoinColumn(name = EntityConstants.FIELD_RENTAL_ID, nullable = false)
     private Rental rental;
 
     /**
      * Utilisateur ayant envoyé ce message.
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = EntityConstants.FIELD_USER_ID, nullable = false)
     private User user;
 
     /**

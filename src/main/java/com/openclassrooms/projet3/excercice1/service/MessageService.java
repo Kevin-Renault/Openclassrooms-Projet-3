@@ -14,9 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
  * Service de gestion des messages.
  * Permet aux utilisateurs d'envoyer des messages concernant les locations.
@@ -57,88 +54,5 @@ public class MessageService {
 
         Message savedMessage = messageRepository.save(message);
         return messageMapper.toDto(savedMessage);
-    }
-
-    /**
-     * Recherche un message par son identifiant.
-     * 
-     * @param id L'identifiant du message
-     * @return Les données du message trouvé
-     * @throws ResourceNotFoundException Si le message n'existe pas
-     */
-    @Transactional(readOnly = true)
-    public MessageDto findById(Long id) {
-        Message message = messageRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(EntityConstants.ENTITY_MESSAGE,
-                        EntityConstants.FIELD_ID, id));
-        return messageMapper.toDto(message);
-    }
-
-    /**
-     * Récupère la liste de tous les messages.
-     * 
-     * @return Liste de tous les messages
-     */
-    @Transactional(readOnly = true)
-    public List<MessageDto> findAll() {
-        return messageRepository.findAll().stream()
-                .map(messageMapper::toDto)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Récupère tous les messages associés à une location spécifique.
-     * 
-     * @param rentalId L'identifiant de la location
-     * @return Liste des messages pour cette location
-     */
-    @Transactional(readOnly = true)
-    public List<MessageDto> findByRentalId(Long rentalId) {
-        return messageRepository.findByRentalId(rentalId).stream()
-                .map(messageMapper::toDto)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Récupère tous les messages envoyés par un utilisateur spécifique.
-     * 
-     * @param userId L'identifiant de l'utilisateur
-     * @return Liste des messages de cet utilisateur
-     */
-    @Transactional(readOnly = true)
-    public List<MessageDto> findByUserId(Long userId) {
-        return messageRepository.findByUserId(userId).stream()
-                .map(messageMapper::toDto)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Met à jour le contenu d'un message.
-     * 
-     * @param id         L'identifiant du message à modifier
-     * @param messageDto Les nouvelles données du message
-     * @return Les données du message mis à jour
-     * @throws ResourceNotFoundException Si le message n'existe pas
-     */
-    public MessageDto update(Long id, MessageDto messageDto) {
-        Message message = messageRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Message", "id", id));
-
-        messageMapper.updateEntityFromDto(messageDto, message);
-        Message updatedMessage = messageRepository.save(message);
-        return messageMapper.toDto(updatedMessage);
-    }
-
-    /**
-     * Supprime un message du système.
-     * 
-     * @param id L'identifiant du message à supprimer
-     * @throws ResourceNotFoundException Si le message n'existe pas
-     */
-    public void delete(Long id) {
-        if (!messageRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Message", "id", id);
-        }
-        messageRepository.deleteById(id);
     }
 }

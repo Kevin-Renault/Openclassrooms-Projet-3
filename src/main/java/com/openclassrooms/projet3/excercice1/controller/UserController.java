@@ -2,17 +2,12 @@ package com.openclassrooms.projet3.excercice1.controller;
 
 import com.openclassrooms.projet3.excercice1.constants.SecurityConstants;
 import com.openclassrooms.projet3.excercice1.dto.UserDto;
-import com.openclassrooms.projet3.excercice1.dto.UserRegistrationDto;
 import com.openclassrooms.projet3.excercice1.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * Contrôleur REST pour la gestion des utilisateurs.

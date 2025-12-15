@@ -1,7 +1,6 @@
 package com.openclassrooms.projet3.excercice1.mapper;
 
 import com.openclassrooms.projet3.excercice1.dto.UserDto;
-import com.openclassrooms.projet3.excercice1.dto.UserRegistrationDto;
 import com.openclassrooms.projet3.excercice1.entity.User;
 import org.springframework.stereotype.Component;
 
@@ -34,22 +33,6 @@ public class UserMapper {
         dto.setUpdatedAt(user.getUpdatedAt());
 
         return dto;
-    }
-
-    /**
-     * Convertit un UserRegistrationDto en entité User.
-     * Inclut le mot de passe du DTO d'inscription.
-     * 
-     * @param dto Le DTO d'inscription à convertir
-     * @return L'entité correspondante, ou null si le DTO est null
-     */
-    public User toEntity(UserRegistrationDto dto) {
-        if (dto == null) {
-            return null;
-        }
-        User user = this.mapToEntity(dto);
-        user.setPassword(dto.getPassword());
-        return user;
     }
 
     /**
