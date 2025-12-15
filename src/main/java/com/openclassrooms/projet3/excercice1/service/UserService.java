@@ -1,5 +1,6 @@
 package com.openclassrooms.projet3.excercice1.service;
 
+import com.openclassrooms.projet3.excercice1.constants.EntityConstants;
 import com.openclassrooms.projet3.excercice1.dto.UserDto;
 import com.openclassrooms.projet3.excercice1.dto.UserRegistrationDto;
 import com.openclassrooms.projet3.excercice1.entity.User;
@@ -41,7 +42,8 @@ public class UserService {
      */
     public UserDto create(UserRegistrationDto userDto) {
         if (userRepository.existsByEmail(userDto.getEmail())) {
-            throw new ResourceAlreadyExistsException("Utilisateur", "email", userDto.getEmail());
+            throw new ResourceAlreadyExistsException(EntityConstants.ENTITY_USER, EntityConstants.FIELD_EMAIL,
+                    userDto.getEmail());
         }
 
         User user = userMapper.toEntity(userDto);
@@ -61,7 +63,8 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserDto findById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "id", id));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(EntityConstants.ENTITY_USER, EntityConstants.FIELD_ID, id));
         return userMapper.toDto(user);
     }
 
@@ -75,7 +78,8 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserDto findByEmail(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "email", email));
+                .orElseThrow(() -> new ResourceNotFoundException(EntityConstants.ENTITY_USER,
+                        EntityConstants.FIELD_EMAIL, email));
         return userMapper.toDto(user);
     }
 
@@ -103,12 +107,14 @@ public class UserService {
      */
     public UserDto update(Long id, UserDto userDto) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "id", id));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(EntityConstants.ENTITY_USER, EntityConstants.FIELD_ID, id));
 
         // Vérifier si l'email est déjà utilisé par un autre utilisateur
         if (!user.getEmail().equals(userDto.getEmail()) &&
                 userRepository.existsByEmail(userDto.getEmail())) {
-            throw new ResourceAlreadyExistsException("Utilisateur", "email", userDto.getEmail());
+            throw new ResourceAlreadyExistsException(EntityConstants.ENTITY_USER, EntityConstants.FIELD_EMAIL,
+                    userDto.getEmail());
         }
 
         userMapper.updateEntityFromDto(userDto, user);
@@ -129,7 +135,8 @@ public class UserService {
      */
     public void updatePassword(Long id, String newPassword) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "id", id));
+                .orElseThrow(
+                        () -> new ResourceNotFoundException(EntityConstants.ENTITY_USER, EntityConstants.FIELD_ID, id));
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
@@ -142,7 +149,7 @@ public class UserService {
      */
     public void delete(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Utilisateur", "id", id);
+            throw new ResourceNotFoundException(EntityConstants.ENTITY_USER, EntityConstants.FIELD_ID, id);
         }
         userRepository.deleteById(id);
     }

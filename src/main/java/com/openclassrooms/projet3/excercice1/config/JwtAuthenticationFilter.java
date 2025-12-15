@@ -1,5 +1,6 @@
 package com.openclassrooms.projet3.excercice1.config;
 
+import com.openclassrooms.projet3.excercice1.constants.SecurityConstants;
 import com.openclassrooms.projet3.excercice1.service.CustomUserDetailsService;
 import com.openclassrooms.projet3.excercice1.service.JwtService;
 import jakarta.servlet.FilterChain;
@@ -46,18 +47,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
 
-        final String authHeader = request.getHeader("Authorization");
+        final String authHeader = request.getHeader(SecurityConstants.AUTHORIZATION_HEADER);
         final String jwt;
         final String userEmail;
 
         // Si pas de token Bearer, continuer la chaîne de filtres
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith(SecurityConstants.BEARER_PREFIX)) {
             filterChain.doFilter(request, response);
             return;
         }
 
         // Extraire le token
-        jwt = authHeader.substring(7);
+        jwt = authHeader.substring(SecurityConstants.BEARER_PREFIX_LENGTH);
         userEmail = jwtService.extractUsername(jwt);
 
         // Si l'email est présent et qu'il n'y a pas déjà d'authentification

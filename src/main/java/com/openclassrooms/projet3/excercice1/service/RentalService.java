@@ -1,5 +1,6 @@
 package com.openclassrooms.projet3.excercice1.service;
 
+import com.openclassrooms.projet3.excercice1.constants.EntityConstants;
 import com.openclassrooms.projet3.excercice1.dto.RentalDto;
 import com.openclassrooms.projet3.excercice1.entity.Rental;
 import com.openclassrooms.projet3.excercice1.entity.User;
@@ -43,7 +44,8 @@ public class RentalService {
     public RentalDto create(RentalDto rentalDto, MultipartFile picture) {
         User owner = userRepository.findById(rentalDto.getOwnerId())
                 .orElseThrow(
-                        () -> new ResourceNotFoundException("Utilisateur", "id", rentalDto.getOwnerId()));
+                        () -> new ResourceNotFoundException(EntityConstants.ENTITY_USER, EntityConstants.FIELD_ID,
+                                rentalDto.getOwnerId()));
 
         // Sauvegarder l'image si elle existe
         if (picture != null && !picture.isEmpty()) {
@@ -68,7 +70,8 @@ public class RentalService {
     @Transactional(readOnly = true)
     public RentalDto findById(Long id) {
         Rental rental = rentalRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Location", "id", id));
+                .orElseThrow(() -> new ResourceNotFoundException(EntityConstants.ENTITY_RENTAL,
+                        EntityConstants.FIELD_ID, id));
         return rentalMapper.toDto(rental);
     }
 

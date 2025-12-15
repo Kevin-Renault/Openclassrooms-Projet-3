@@ -1,5 +1,6 @@
 package com.openclassrooms.projet3.excercice1.config;
 
+import com.openclassrooms.projet3.excercice1.constants.ApiConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,9 +47,11 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // Routes publiques
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/uploads/pictures/**").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers(ApiConstants.AUTH_PUBLIC_PATHS).permitAll()
+                        .requestMatchers(ApiConstants.UPLOADS_PUBLIC_PATHS).permitAll()
+                        .requestMatchers(ApiConstants.SWAGGER_PATHS, ApiConstants.API_DOCS_PATHS,
+                                ApiConstants.SWAGGER_HTML_PATH)
+                        .permitAll()
                         // Toutes les autres routes nécessitent une authentification
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session

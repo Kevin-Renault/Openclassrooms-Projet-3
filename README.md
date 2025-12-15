@@ -518,7 +518,7 @@ Les erreurs de validation retournent un status **400 Bad Request** avec détails
 
 ## 🚧 Limitations connues
 
-- **Upload de fichiers** : Le endpoint `POST /api/rentals` accepte `multipart/form-data` mais la gestion du fichier `picture` n'est pas encore implémentée (TODO)
+- **Upload de fichiers** : ✅ Implémenté avec FileStorageService (UUID unique, validation, stockage dans `uploads/pictures/`)
 - **Refresh token** : Pas de mécanisme de rafraîchissement automatique du token (expiration fixe 24h)
 - **Roles/Authorities** : Pas de gestion des rôles utilisateur (tous les utilisateurs ont les mêmes droits)
 - **Pagination** : Les listes (`GET /api/rentals`, etc.) ne sont pas paginées

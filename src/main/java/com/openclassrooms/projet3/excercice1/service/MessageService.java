@@ -1,5 +1,6 @@
 package com.openclassrooms.projet3.excercice1.service;
 
+import com.openclassrooms.projet3.excercice1.constants.EntityConstants;
 import com.openclassrooms.projet3.excercice1.dto.MessageDto;
 import com.openclassrooms.projet3.excercice1.entity.Message;
 import com.openclassrooms.projet3.excercice1.entity.Rental;
@@ -43,10 +44,12 @@ public class MessageService {
      */
     public MessageDto create(MessageDto messageDto) {
         User user = userRepository.findById(messageDto.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", "id", messageDto.getUserId()));
+                .orElseThrow(() -> new ResourceNotFoundException(EntityConstants.ENTITY_USER, EntityConstants.FIELD_ID,
+                        messageDto.getUserId()));
 
         Rental rental = rentalRepository.findById(messageDto.getRentalId())
-                .orElseThrow(() -> new ResourceNotFoundException("Location", "id", messageDto.getRentalId()));
+                .orElseThrow(() -> new ResourceNotFoundException(EntityConstants.ENTITY_RENTAL,
+                        EntityConstants.FIELD_ID, messageDto.getRentalId()));
 
         Message message = messageMapper.toEntity(messageDto);
         message.setUser(user);
@@ -66,7 +69,8 @@ public class MessageService {
     @Transactional(readOnly = true)
     public MessageDto findById(Long id) {
         Message message = messageRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Message", "id", id));
+                .orElseThrow(() -> new ResourceNotFoundException(EntityConstants.ENTITY_MESSAGE,
+                        EntityConstants.FIELD_ID, id));
         return messageMapper.toDto(message);
     }
 

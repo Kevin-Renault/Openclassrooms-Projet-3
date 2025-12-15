@@ -1,5 +1,6 @@
 package com.openclassrooms.projet3.excercice1.service;
 
+import com.openclassrooms.projet3.excercice1.constants.EntityConstants;
 import com.openclassrooms.projet3.excercice1.dto.AuthResponse;
 import com.openclassrooms.projet3.excercice1.dto.LoginRequest;
 import com.openclassrooms.projet3.excercice1.dto.RegisterRequest;
@@ -45,7 +46,8 @@ public class AuthService {
     public AuthResponse register(RegisterRequest request) {
         // Vérifier si l'email existe déjà
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new ResourceAlreadyExistsException("Utilisateur", "email", request.getEmail());
+            throw new ResourceAlreadyExistsException(EntityConstants.ENTITY_USER, EntityConstants.FIELD_EMAIL,
+                    request.getEmail());
         }
 
         // Créer l'utilisateur

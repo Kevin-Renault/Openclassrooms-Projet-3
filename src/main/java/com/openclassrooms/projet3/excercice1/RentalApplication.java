@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * immobilières, les utilisateurs et les messages entre propriétaires et
  * locataires potentiels.
  * 
- * @author Kévin Renault
+ * @author Kévin Renaults
  */
 @SpringBootApplication
 public class RentalApplication {

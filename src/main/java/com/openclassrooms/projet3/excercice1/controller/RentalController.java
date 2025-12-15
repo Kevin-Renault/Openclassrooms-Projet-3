@@ -1,5 +1,6 @@
 package com.openclassrooms.projet3.excercice1.controller;
 
+import com.openclassrooms.projet3.excercice1.constants.SecurityConstants;
 import com.openclassrooms.projet3.excercice1.dto.RentalDto;
 import com.openclassrooms.projet3.excercice1.dto.RentalResponse;
 import com.openclassrooms.projet3.excercice1.service.RentalService;
@@ -26,7 +27,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/rentals")
 @RequiredArgsConstructor
-@SecurityRequirement(name = "bearerAuth")
+@SecurityRequirement(name = SecurityConstants.BEARER_AUTH_SCHEME)
 public class RentalController {
 
     private final RentalService rentalService;
@@ -94,19 +95,6 @@ public class RentalController {
     }
 
     /**
-     * Récupère toutes les locations d'un propriétaire spécifique.
-     * 
-     * @param ownerId L'identifiant du propriétaire
-     * @return Une réponse HTTP 200 avec la liste des locations du propriétaire
-     */
-    @Operation(summary = "Locations par propriétaire", description = "Récupère toutes les locations d'un propriétaire spécifique")
-    @GetMapping("/owner/{ownerId}")
-    public ResponseEntity<List<RentalDto>> findByOwnerId(@PathVariable Long ownerId) {
-        List<RentalDto> rentals = rentalService.findByOwnerId(ownerId);
-        return ResponseEntity.ok(rentals);
-    }
-
-    /**
      * Met à jour les informations d'une location.
      * 
      * @param id        L'identifiant de la location à modifier
@@ -118,18 +106,5 @@ public class RentalController {
     public ResponseEntity<RentalDto> update(@PathVariable Long id, @Valid @RequestBody RentalDto rentalDto) {
         RentalDto updatedRental = rentalService.update(id, rentalDto);
         return ResponseEntity.ok(updatedRental);
-    }
-
-    /**
-     * Supprime une location du système.
-     * 
-     * @param id L'identifiant de la location à supprimer
-     * @return Une réponse HTTP 204 (No Content)
-     */
-    @Operation(summary = "Supprimer une location", description = "Supprime définitivement une location du système")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        rentalService.delete(id);
-        return ResponseEntity.noContent().build();
     }
 }

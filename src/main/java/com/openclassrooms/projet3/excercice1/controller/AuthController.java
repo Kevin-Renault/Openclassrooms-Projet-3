@@ -1,5 +1,6 @@
 package com.openclassrooms.projet3.excercice1.controller;
 
+import com.openclassrooms.projet3.excercice1.constants.SecurityConstants;
 import com.openclassrooms.projet3.excercice1.dto.AuthResponse;
 import com.openclassrooms.projet3.excercice1.dto.LoginRequest;
 import com.openclassrooms.projet3.excercice1.dto.RegisterRequest;
@@ -66,7 +67,7 @@ public class AuthController {
      * @return Une réponse HTTP 200 avec les données de l'utilisateur
      */
     @Operation(summary = "Utilisateur courant", description = "Récupère les informations de l'utilisateur authentifié")
-    @SecurityRequirement(name = "bearerAuth")
+    @SecurityRequirement(name = SecurityConstants.BEARER_AUTH_SCHEME)
     @GetMapping("/me")
     public ResponseEntity<UserDto> getCurrentUser(Authentication authentication) {
         UserDto user = authService.getCurrentUser(authentication);
