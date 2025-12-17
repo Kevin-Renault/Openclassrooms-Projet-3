@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -121,6 +122,8 @@ public class FileStorageService {
         }
     }
 
+    private static final Set<String> ALLOWED_EXTENSIONS = Set.of("jpg", "jpeg", "png", "gif", "webp");
+
     /**
      * Extrait l'extension d'un nom de fichier.
      * 
@@ -130,8 +133,13 @@ public class FileStorageService {
      */
     private String getFileExtension(String filename) {
         if (filename == null || !filename.contains(".")) {
-            return "";
+            return "jpg"; // Extension par défaut
         }
-        return filename.substring(filename.lastIndexOf(".") + 1);
+        String ext = filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
+
+        if (!ALLOWED_EXTENSIONS.contains(ext)) {
+            throw new FileStorageException("Type de fichier non autorisé: " + ext);
+        }
+        return ext;
     }
 }
