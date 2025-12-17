@@ -42,11 +42,15 @@ public class RentalService {
      * @return Les données de la location créée avec l'URL de l'image
      * @throws ResourceNotFoundException Si le propriétaire n'existe pas
      */
-    public RentalDto create(RentalDto rentalDto, MultipartFile picture) {
-        User owner = userRepository.findById(rentalDto.getOwnerId())
+    public RentalDto create(@NonNull RentalDto rentalDto, MultipartFile picture) {
+        Long ownerId = rentalDto.getOwnerId();
+        if (ownerId == null) {
+            throw new IllegalArgumentException("L'ID du propriétaire ne peut pas être null");
+        }
+        User owner = userRepository.findById(ownerId)
                 .orElseThrow(
                         () -> new ResourceNotFoundException(EntityConstants.ENTITY_USER, EntityConstants.FIELD_ID,
-                                rentalDto.getOwnerId()));
+                                ownerId));
 
         // Sauvegarder l'image si elle existe
         if (picture != null && !picture.isEmpty()) {
@@ -69,7 +73,7 @@ public class RentalService {
      * @throws ResourceNotFoundException Si la location n'existe pas
      */
     @Transactional(readOnly = true)
-    public RentalDto findById(Long id) {
+    public RentalDto findById(@NonNull Long id) {
         Rental rental = rentalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(EntityConstants.ENTITY_RENTAL,
                         EntityConstants.FIELD_ID, id));
@@ -96,7 +100,7 @@ public class RentalService {
      * @return Les données de la location mise à jour
      * @throws ResourceNotFoundException Si la location n'existe pas
      */
-    public RentalDto update(@NonNull Long id, @NonNull RentalDto rentalDto) {
+    public RentalDto update(Long id, RentalDto rentalDto) {
         Rental rental = rentalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(EntityConstants.ENTITY_RENTAL,
                         EntityConstants.FIELD_ID, id));

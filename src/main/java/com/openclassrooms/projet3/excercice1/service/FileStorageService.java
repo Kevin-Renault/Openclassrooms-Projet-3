@@ -70,9 +70,15 @@ public class FileStorageService {
         }
 
         try {
+            String originalFilename = file.getOriginalFilename();
+            if (originalFilename == null || originalFilename.isEmpty()) {
+                throw new IllegalArgumentException("Le fichier doit avoir un nom");
+            }
             // Nettoyer et valider le nom de fichier
-            String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
-
+            originalFilename = StringUtils.cleanPath(originalFilename);
+            if (originalFilename == null || originalFilename.isEmpty()) {
+                throw new IllegalArgumentException("Le fichier doit avoir un nom");
+            }
             if (originalFilename.contains("..")) {
                 throw new IllegalArgumentException("Nom de fichier invalide: " + originalFilename);
             }

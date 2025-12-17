@@ -286,26 +286,20 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ### Routes protégées (authentification requise)
 
+#### Authentication
+- `GET /api/auth/me` - Récupérer l'utilisateur connecté
+
 #### Users
-- `GET /api/users` - Liste des utilisateurs
-- `GET /api/users/{id}` - Détails d'un utilisateur
-- `POST /api/users` - Créer un utilisateur
-- `PUT /api/users/{id}` - Modifier un utilisateur
-- `DELETE /api/users/{id}` - Supprimer un utilisateur
+- `GET /api/user/{id}` - Détails d'un utilisateur
 
 #### Rentals
-- `GET /api/rentals` - Liste des locations
+- `GET /api/rentals` - Liste de toutes les locations
 - `GET /api/rentals/{id}` - Détails d'une location
-- `GET /api/rentals/owner/{ownerId}` - Locations par propriétaire
 - `POST /api/rentals` - Créer une location (multipart/form-data)
-- `PUT /api/rentals/{id}` - Modifier une location
-- `DELETE /api/rentals/{id}` - Supprimer une location
+- `PUT /api/rentals/{id}` - Modifier une location (multipart/form-data)
 
 #### Messages
-- `GET /api/messages` - Liste des messages
-- `GET /api/messages/{id}` - Détails d'un message
-- `POST /api/messages` - Envoyer un message
-- `DELETE /api/messages/{id}` - Supprimer un message
+- `POST /api/messages` - Envoyer un message concernant une location
 
 ### Exemple de requête avec token
 

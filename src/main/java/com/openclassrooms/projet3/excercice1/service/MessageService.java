@@ -11,6 +11,7 @@ import com.openclassrooms.projet3.excercice1.repository.MessageRepository;
 import com.openclassrooms.projet3.excercice1.repository.RentalRepository;
 import com.openclassrooms.projet3.excercice1.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
