@@ -40,6 +40,6 @@ public class MessageController {
     public ResponseEntity<MessageResponse> create(@Valid @RequestBody MessageDto messageDto) {
         messageService.create(messageDto);
         MessageResponse message = new MessageResponse(MessageConstants.MESSAGE_SENT_SUCCESS);
-        return ResponseEntity.status(HttpStatus.CREATED).body(message);
+        return ResponseEntity.status(HttpStatus.OK).body(message);
     }
 }

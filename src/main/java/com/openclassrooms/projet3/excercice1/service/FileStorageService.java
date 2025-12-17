@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.openclassrooms.projet3.excercice1.exception.FileStorageException;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -45,7 +47,8 @@ public class FileStorageService {
             Files.createDirectories(this.fileStorageLocation);
             log.info("Dossier d'upload créé: {}", this.fileStorageLocation);
         } catch (IOException ex) {
-            throw new RuntimeException("Impossible de créer le dossier d'upload", ex);
+            throw new FileStorageException(
+                    String.format("Impossible de créer le dossier d'upload : %s", ex.getMessage()));
         }
     }
 
@@ -87,7 +90,9 @@ public class FileStorageService {
             return baseUrl + "/uploads/pictures/" + uniqueFilename;
 
         } catch (IOException ex) {
-            throw new RuntimeException("Erreur lors de la sauvegarde du fichier: " + file.getOriginalFilename(), ex);
+            throw new FileStorageException(
+                    String.format("Erreur lors de la sauvegarde du fichier %s : %s", file.getOriginalFilename(),
+                            ex.getMessage()));
         }
     }
 

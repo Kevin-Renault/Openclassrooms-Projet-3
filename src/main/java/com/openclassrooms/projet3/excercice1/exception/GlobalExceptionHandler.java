@@ -55,8 +55,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex) {
         HttpStatus status;
-        if (ex instanceof ApiException) {
-            status = ((ApiException) ex).getHttpStatus();
+        if (ex instanceof ApiException exception) {
+            status = exception.getHttpStatus();
         } else {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }

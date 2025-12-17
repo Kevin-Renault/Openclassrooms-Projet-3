@@ -49,8 +49,8 @@ public class Message {
     /**
      * Contenu textuel du message.
      */
-    @Column(nullable = false, length = 2000)
-    private String message;
+    @Column(name = "message", nullable = false, length = 2000)
+    private String messageContent;
 
     /**
      * Date et heure de création du message.

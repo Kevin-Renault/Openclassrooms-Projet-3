@@ -54,7 +54,8 @@ public class MessageDto {
      */
     @NotBlank
     @Size(max = ValidationConstants.MESSAGE_MAX_SIZE)
-    private String message;
+    @JsonProperty("message")
+    private String messageContent;
 
     /**
      * Date et heure de création du message.

@@ -3,7 +3,10 @@ package com.openclassrooms.projet3.excercice1.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.Part;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
@@ -42,7 +45,8 @@ public class LoggingFilter extends OncePerRequestFilter {
      * @throws IOException      En cas d'erreur d'I/O
      */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain)
             throws ServletException, IOException {
 
         // Wrapper pour capturer la requête et la réponse
@@ -54,40 +58,15 @@ public class LoggingFilter extends OncePerRequestFilter {
         log.info("📥 Requête: {} {} - Content-Type: {}", request.getMethod(), request.getRequestURI(), contentType);
 
         // Logger les paramètres de la requête si présents
-        if (request.getParameterMap() != null && !request.getParameterMap().isEmpty()) {
+        if (CollectionUtils.isEmpty(request.getParameterMap())) {
             StringBuilder params = new StringBuilder();
-            request.getParameterMap().forEach((key, values) -> {
-                params.append(key).append("=").append(String.join(",", values)).append(" ");
-            });
+            request.getParameterMap().forEach(
+                    (key, values) -> params.append(key).append("=").append(String.join(",", values)).append(" "));
             log.info("📨 Request Parameters: {}", params.toString().trim());
         }
 
         // Pour multipart/form-data, afficher les champs non-binaires
-        if (contentType != null && contentType.contains("multipart/form-data")) {
-            try {
-                StringBuilder multipartData = new StringBuilder();
-                for (Part part : request.getParts()) {
-                    String partName = part.getName();
-                    String fileName = part.getSubmittedFileName();
-
-                    if (fileName != null) {
-                        // C'est un fichier
-                        multipartData.append(String.format("  %s: [FILE: %s, size: %d bytes, type: %s]\n",
-                                partName, fileName, part.getSize(), part.getContentType()));
-                    } else {
-                        // C'est un champ texte
-                        try (BufferedReader reader = new BufferedReader(
-                                new InputStreamReader(part.getInputStream(), StandardCharsets.UTF_8))) {
-                            String value = reader.lines().collect(Collectors.joining("\n"));
-                            multipartData.append(String.format("  %s: %s\n", partName, value));
-                        }
-                    }
-                }
-                log.info("📨 Multipart Form Data:\n{}", multipartData.toString());
-            } catch (Exception e) {
-                log.warn("⚠️ Impossible de lire les parts multipart: {}", e.getMessage());
-            }
-        }
+        treateContentType(request);
 
         // Exécuter la chaîne de filtres
         filterChain.doFilter(requestWrapper, responseWrapper);
@@ -115,6 +94,41 @@ public class LoggingFilter extends OncePerRequestFilter {
                 request.getRequestURI(),
                 response.getStatus());
 
+        treateResponseArray(responseArray);
+
+        // Important: copier le contenu dans la vraie réponse
+        responseWrapper.copyBodyToResponse();
+    }
+
+    private void treateContentType(@NonNull HttpServletRequest request) {
+        if (request.getContentType() != null && request.getContentType().contains("multipart/form-data")) {
+            try {
+                StringBuilder multipartData = new StringBuilder();
+                for (Part part : request.getParts()) {
+                    String partName = part.getName();
+                    String fileName = part.getSubmittedFileName();
+
+                    if (fileName != null) {
+                        // C'est un fichier
+                        multipartData.append(String.format("  %s: [FILE: %s, size: %d bytes, type: %s]%n",
+                                partName, fileName, part.getSize(), part.getContentType()));
+                    } else {
+                        // C'est un champ texte
+                        try (BufferedReader reader = new BufferedReader(
+                                new InputStreamReader(part.getInputStream(), StandardCharsets.UTF_8))) {
+                            String value = reader.lines().collect(Collectors.joining("\n"));
+                            multipartData.append(String.format("  %s: %s%n", partName, value));
+                        }
+                    }
+                }
+                log.info("📨 Multipart Form Data:\n{}", multipartData.toString());
+            } catch (Exception e) {
+                log.warn("⚠️ Impossible de lire les parts multipart: {}", e.getMessage());
+            }
+        }
+    }
+
+    private void treateResponseArray(byte[] responseArray) {
         if (responseArray.length > 0) {
             String responseBody = new String(responseArray, StandardCharsets.UTF_8);
             try {
@@ -127,8 +141,5 @@ public class LoggingFilter extends OncePerRequestFilter {
                 log.info("📋 Response Body: {}", responseBody);
             }
         }
-
-        // Important: copier le contenu dans la vraie réponse
-        responseWrapper.copyBodyToResponse();
     }
 }

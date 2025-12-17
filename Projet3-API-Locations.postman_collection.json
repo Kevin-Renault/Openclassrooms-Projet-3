@@ -1,7 +1,7 @@
 {
 	"info": {
 		"name": "Projet3 - API Locations",
-		"description": "Collection complète pour tester l'API de gestion de locations",
+		"description": "Collection Postman pour l'API ChaTop - Gestion de locations immobilières",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -99,41 +99,9 @@
 						}
 					},
 					"response": []
-				}
-			]
-		},
-		{
-			"name": "Users",
-			"item": [
-				{
-					"name": "Create User",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Jean Dupont\",\n  \"email\": \"jean.dupont@example.com\",\n  \"password\": \"motdepasse123\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/users",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"users"
-							]
-						}
-					},
-					"response": []
 				},
 				{
-					"name": "Get All Users",
+					"name": "Get Current User (/me)",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -148,18 +116,24 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/users",
+							"raw": "{{baseUrl}}/api/auth/me",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
-								"users"
+								"auth",
+								"me"
 							]
 						}
 					},
 					"response": []
-				},
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
 				{
 					"name": "Get User By ID",
 					"request": {
@@ -176,110 +150,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/users/1",
+							"raw": "{{baseUrl}}/api/user/1",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"api",
-								"users",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get User By Email",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{authToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/users/email/jean.dupont@example.com",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"users",
-								"email",
-								"jean.dupont@example.com"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update User",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{authToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Jean Dupont Modifié\",\n  \"email\": \"jean.dupont.nouveau@example.com\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/users/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"users",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete User",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{authToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/users/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"users",
+								"user",
 								"1"
 							]
 						}
@@ -292,7 +169,7 @@
 			"name": "Rentals",
 			"item": [
 				{
-					"name": "Create Rental",
+					"name": "Create Rental (multipart/form-data)",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -305,15 +182,37 @@
 							]
 						},
 						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
+						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Appartement T3 Centre-ville\",\n  \"surface\": 75,\n  \"price\": 850,\n  \"picture\": \"https://example.com/photo.jpg\",\n  \"description\": \"Bel appartement lumineux proche commerces et transports\",\n  \"ownerId\": 1\n}"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Appartement T3 Centre-ville",
+									"type": "text"
+								},
+								{
+									"key": "surface",
+									"value": "75",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "850",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Bel appartement lumineux proche commerces et transports",
+									"type": "text"
+								},
+								{
+									"key": "picture",
+									"type": "file",
+									"src": [],
+									"description": "Image de la location (optionnel)"
+								}
+							]
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/rentals",
@@ -386,37 +285,7 @@
 					"response": []
 				},
 				{
-					"name": "Get Rentals By Owner",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{authToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/rentals/owner/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"rentals",
-								"owner",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Rental",
+					"name": "Update Rental (multipart/form-data)",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -429,45 +298,32 @@
 							]
 						},
 						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
+						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Appartement T3 Centre-ville Rénové\",\n  \"surface\": 75,\n  \"price\": 900,\n  \"picture\": \"https://example.com/photo-new.jpg\",\n  \"description\": \"Appartement entièrement rénové, cuisine équipée\",\n  \"ownerId\": 1\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/rentals/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"rentals",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Rental",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
+							"mode": "formdata",
+							"formdata": [
 								{
-									"key": "token",
-									"value": "{{authToken}}",
-									"type": "string"
+									"key": "name",
+									"value": "Appartement T3 Centre-ville Rénové",
+									"type": "text"
+								},
+								{
+									"key": "surface",
+									"value": "75",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "900",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "Appartement entièrement rénové, cuisine équipée",
+									"type": "text"
 								}
 							]
 						},
-						"method": "DELETE",
-						"header": [],
 						"url": {
 							"raw": "{{baseUrl}}/api/rentals/1",
 							"host": [
@@ -509,7 +365,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"rentalId\": 1,\n  \"userId\": 2,\n  \"message\": \"Bonjour, l'appartement est-il toujours disponible ?\"\n}"
+							"raw": "{\n  \"rental_id\": 1,\n  \"user_id\": 2,\n  \"message\": \"Bonjour, l'appartement est-il toujours disponible ?\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/api/messages",
@@ -519,341 +375,6 @@
 							"path": [
 								"api",
 								"messages"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get All Messages",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{authToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/messages",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"messages"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Message By ID",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{authToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/messages/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"messages",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Messages By Rental",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{authToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/messages/rental/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"messages",
-								"rental",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Messages By User",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{authToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/messages/user/2",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"messages",
-								"user",
-								"2"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Update Message",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{authToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"rentalId\": 1,\n  \"userId\": 2,\n  \"message\": \"Message mis à jour : Pouvez-vous me rappeler au 06 12 34 56 78 ?\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/messages/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"messages",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Delete Message",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{authToken}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/messages/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"messages",
-								"1"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Workflow Test Complet",
-			"item": [
-				{
-					"name": "1. Create Owner",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Marie Propriétaire\",\n  \"email\": \"marie.proprio@example.com\",\n  \"password\": \"password123\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/users",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"users"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "2. Create Tenant",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Pierre Locataire\",\n  \"email\": \"pierre.locataire@example.com\",\n  \"password\": \"password456\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/users",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"users"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "3. Create Rental",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \"Studio meublé\",\n  \"surface\": 25,\n  \"price\": 550,\n  \"picture\": \"https://example.com/studio.jpg\",\n  \"description\": \"Studio idéal étudiant, proche université\",\n  \"ownerId\": 1\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/rentals",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"rentals"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "4. Send Message",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"rentalId\": 1,\n  \"userId\": 2,\n  \"message\": \"Bonjour, je suis intéressé par votre studio. Est-il disponible à partir du 1er janvier ?\"\n}"
-						},
-						"url": {
-							"raw": "{{baseUrl}}/api/messages",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"messages"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "5. Get All Rentals",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/rentals",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"rentals"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "6. Get Messages for Rental",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/api/messages/rental/1",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"api",
-								"messages",
-								"rental",
-								"1"
 							]
 						}
 					},

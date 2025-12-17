@@ -2,6 +2,8 @@ package com.openclassrooms.projet3.excercice1.mapper;
 
 import com.openclassrooms.projet3.excercice1.dto.RentalDto;
 import com.openclassrooms.projet3.excercice1.entity.Rental;
+
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 /**
@@ -76,11 +78,7 @@ public class RentalMapper {
      * @param dto    Le DTO contenant les nouvelles données
      * @param rental L'entité à mettre à jour
      */
-    public void updateEntityFromDto(RentalDto dto, Rental rental) {
-        if (dto == null || rental == null) {
-            return;
-        }
-
+    public void updateEntityFromDto(@NonNull RentalDto dto, @NonNull Rental rental) {
         rental.setName(dto.getName());
         rental.setSurface(dto.getSurface());
         rental.setPrice(dto.getPrice());

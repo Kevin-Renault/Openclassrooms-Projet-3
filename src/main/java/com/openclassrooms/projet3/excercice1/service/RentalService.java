@@ -9,12 +9,13 @@ import com.openclassrooms.projet3.excercice1.mapper.RentalMapper;
 import com.openclassrooms.projet3.excercice1.repository.RentalRepository;
 import com.openclassrooms.projet3.excercice1.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Service de gestion des locations immobilières.
@@ -83,21 +84,7 @@ public class RentalService {
     @Transactional(readOnly = true)
     public List<RentalDto> findAll() {
         return rentalRepository.findAll().stream()
-                .map(rentalMapper::toDto)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Récupère toutes les locations appartenant à un propriétaire spécifique.
-     * 
-     * @param ownerId L'identifiant du propriétaire
-     * @return Liste des locations du propriétaire
-     */
-    @Transactional(readOnly = true)
-    public List<RentalDto> findByOwnerId(Long ownerId) {
-        return rentalRepository.findByOwnerId(ownerId).stream()
-                .map(rentalMapper::toDto)
-                .collect(Collectors.toList());
+                .map(rentalMapper::toDto).toList();
     }
 
     /**
@@ -109,25 +96,12 @@ public class RentalService {
      * @return Les données de la location mise à jour
      * @throws ResourceNotFoundException Si la location n'existe pas
      */
-    public RentalDto update(Long id, RentalDto rentalDto) {
+    public RentalDto update(@NonNull Long id, @NonNull RentalDto rentalDto) {
         Rental rental = rentalRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(EntityConstants.ENTITY_RENTAL,
                         EntityConstants.FIELD_ID, id));
         rentalMapper.updateEntityFromDto(rentalDto, rental);
         Rental updatedRental = rentalRepository.save(rental);
         return rentalMapper.toDto(updatedRental);
-    }
-
-    /**
-     * Supprime une location du système.
-     * 
-     * @param id L'identifiant de la location à supprimer
-     * @throws ResourceNotFoundException Si la location n'existe pas
-     */
-    public void delete(Long id) {
-        if (!rentalRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Location", "id", id);
-        }
-        rentalRepository.deleteById(id);
     }
 }

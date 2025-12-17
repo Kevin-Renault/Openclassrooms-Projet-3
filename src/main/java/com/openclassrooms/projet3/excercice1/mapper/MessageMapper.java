@@ -30,7 +30,7 @@ public class MessageMapper {
         dto.setId(message.getId());
         dto.setRentalId(message.getRental() != null ? message.getRental().getId() : null);
         dto.setUserId(message.getUser() != null ? message.getUser().getId() : null);
-        dto.setMessage(message.getMessage());
+        dto.setMessageContent(message.getMessageContent());
         dto.setCreatedAt(message.getCreatedAt());
         dto.setUpdatedAt(message.getUpdatedAt());
 
@@ -52,7 +52,7 @@ public class MessageMapper {
 
         Message message = new Message();
         message.setId(dto.getId());
-        message.setMessage(dto.getMessage());
+        message.setMessageContent(dto.getMessageContent());
         message.setCreatedAt(dto.getCreatedAt());
         message.setUpdatedAt(dto.getUpdatedAt());
 
@@ -74,6 +74,6 @@ public class MessageMapper {
             return;
         }
 
-        message.setMessage(dto.getMessage());
+        message.setMessageContent(dto.getMessageContent());
     }
 }

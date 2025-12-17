@@ -65,7 +65,7 @@ public class RentalController {
         rentalDto.setOwnerId(ownerId);
 
         RentalDto createdRental = rentalService.create(rentalDto, picture);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdRental);
+        return ResponseEntity.status(HttpStatus.OK).body(createdRental);
     }
 
     /**
