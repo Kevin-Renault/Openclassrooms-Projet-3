@@ -12,13 +12,13 @@ Application Spring Boot pour la gestion de locations (ChaTop) avec authentificat
 
 ## 🔧 Technologies utilisées
 
-- **Spring Boot** : 4.0.1-SNAPSHOT
+- **Spring Boot** : 3.3.5
 - **Spring Data JPA** : Gestion de la persistance
-- **Spring Security 7** : Sécurisation avec session STATELESS
+- **Spring Security** : 6.3.4 - Sécurisation avec session STATELESS
 - **JWT (JSON Web Tokens)** : Authentification (jjwt 0.11.5)
 - **MySQL Connector** : Driver de base de données
-- **Lombok** : Réduction du code boilerplate
-- **Hibernate 7** : ORM (via JPA)
+- **Lombok** : 1.18.32 - Réduction du code boilerplate
+- **Hibernate** : 6.5.3.Final - ORM (via JPA)
 - **Bean Validation** : Validation des données
 
 ## 📁 Structure du projet
@@ -29,46 +29,61 @@ excercice1/
 │   ├── main/
 │   │   ├── java/com/openclassrooms/projet3/excercice1/
 │   │   │   ├── config/              # Configuration Spring
-│   │   │   │   ├── SecurityConfig.java
 │   │   │   │   ├── JwtAuthenticationFilter.java
 │   │   │   │   ├── LoggingFilter.java
-│   │   │   │   └── ValidationConstants.java
+│   │   │   │   ├── OpenApiConfig.java
+│   │   │   │   ├── SecurityConfig.java
+│   │   │   │   ├── ValidationConstants.java
+│   │   │   │   └── WebConfig.java
+│   │   │   ├── constants/           # Constantes de l'application
+│   │   │   │   ├── ApiConstants.java
+│   │   │   │   ├── EntityConstants.java
+│   │   │   │   ├── FormatConstants.java
+│   │   │   │   ├── MessageConstants.java
+│   │   │   │   └── SecurityConstants.java
 │   │   │   ├── controller/          # Contrôleurs REST
 │   │   │   │   ├── AuthController.java
-│   │   │   │   ├── UserController.java
+│   │   │   │   ├── MessageController.java
 │   │   │   │   ├── RentalController.java
-│   │   │   │   └── MessageController.java
+│   │   │   │   └── UserController.java
 │   │   │   ├── dto/                 # Data Transfer Objects
-│   │   │   │   ├── UserDto.java
-│   │   │   │   ├── RentalDto.java
-│   │   │   │   ├── MessageDto.java
+│   │   │   │   ├── AuthResponse.java
+│   │   │   │   ├── ErrorResponse.java
 │   │   │   │   ├── LoginRequest.java
+│   │   │   │   ├── MessageDto.java
+│   │   │   │   ├── MessageResponse.java
 │   │   │   │   ├── RegisterRequest.java
-│   │   │   │   └── AuthResponse.java
+│   │   │   │   ├── RentalDto.java
+│   │   │   │   ├── RentalResponse.java
+│   │   │   │   └── UserDto.java
 │   │   │   ├── entity/              # Entités JPA
-│   │   │   │   ├── User.java
+│   │   │   │   ├── Message.java
 │   │   │   │   ├── Rental.java
-│   │   │   │   └── Message.java
+│   │   │   │   └── User.java
 │   │   │   ├── exception/           # Gestion des erreurs
+│   │   │   │   ├── ApiException.java
+│   │   │   │   ├── BadRequestException.java
+│   │   │   │   ├── FileStorageException.java
 │   │   │   │   ├── GlobalExceptionHandler.java
-│   │   │   │   ├── ResourceNotFoundException.java
-│   │   │   │   └── EmailAlreadyExistsException.java
+│   │   │   │   ├── ResourceAlreadyExistsException.java
+│   │   │   │   └── ResourceNotFoundException.java
 │   │   │   ├── mapper/              # Mappers Entity <-> DTO
-│   │   │   │   ├── UserMapper.java
+│   │   │   │   ├── MessageMapper.java
 │   │   │   │   ├── RentalMapper.java
-│   │   │   │   └── MessageMapper.java
+│   │   │   │   └── UserMapper.java
 │   │   │   ├── repository/          # Repositories JPA
-│   │   │   │   ├── UserRepository.java
+│   │   │   │   ├── MessageRepository.java
 │   │   │   │   ├── RentalRepository.java
-│   │   │   │   └── MessageRepository.java
+│   │   │   │   └── UserRepository.java
 │   │   │   ├── service/             # Services métier
 │   │   │   │   ├── AuthService.java
-│   │   │   │   ├── JwtService.java
 │   │   │   │   ├── CustomUserDetailsService.java
-│   │   │   │   ├── UserService.java
+│   │   │   │   ├── FileStorageService.java
+│   │   │   │   ├── JwtService.java
+│   │   │   │   ├── MessageService.java
 │   │   │   │   ├── RentalService.java
-│   │   │   │   └── MessageService.java
-│   │   │   └── Excercice1Application.java
+│   │   │   │   └── UserService.java
+│   │   │   └── RentalApplication.java
 │   │   └── resources/
 │   │       ├── application.properties
 │   │       └── ValidationMessages.properties
@@ -196,7 +211,7 @@ URL IHM : http://localhost:3001 (frontend)
 Si Tomcat démarre correctement :
 ```
 Tomcat started on port 3001 (http)
-Started Excercice1Application in X.XXX seconds
+Started RentalApplication in X.XXX seconds
 ```
 
 > 📌 **Note** : Le port 3001 est utilisé au lieu de 8080 pour correspondre à la configuration de l'IHM frontend.
@@ -363,7 +378,7 @@ Controller → Service → Repository → Entity
 **Sécurité** :
 - **JwtAuthenticationFilter** : Validation des tokens avant chaque requête
 - **LoggingFilter** : Logs des requêtes/réponses (debug)
-- **SecurityConfig** : Configuration Spring Security 7
+- **SecurityConfig** : Configuration Spring Security 6.3.4
 - **CustomUserDetailsService** : Chargement des utilisateurs
 
 ## 🐛 Résolution des problèmes courants
@@ -407,7 +422,9 @@ Get-Process -Id (Get-NetTCPConnection -LocalPort 3001).OwningProcess | Stop-Proc
 
 ### Erreur : "Content-Type multipart/form-data is not supported"
 
-✅ **Solution** : Pour `POST /api/rentals`, utilisez `multipart/form-data` avec des champs séparés (`name`, `surface`, `price`, `picture`, `description`, `owner_id`).
+✅ **Solution** : Pour `POST /api/rentals`, utilisez `multipart/form-data` avec des champs séparés (`name`, `surface`, `price`, `picture`, `description`).
+
+> ℹ️ **Note** : Le `owner_id` est automatiquement récupéré depuis le token JWT de l'utilisateur connecté.
 
 ## 🔍 Debugging
 

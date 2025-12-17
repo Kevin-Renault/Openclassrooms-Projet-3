@@ -52,7 +52,7 @@ public class Rental {
     /**
      * URL de l'image principale de la location.
      */
-    @Column(length = 1000)
+    @Column(length = 255)
     private String picture;
 
     /**

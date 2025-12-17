@@ -33,7 +33,7 @@ public final class ValidationConstants {
     /**
      * Taille maximale pour les URLs d'images.
      */
-    public static final int PICTURE_MAX_SIZE = 1000;
+    public static final int PICTURE_MAX_SIZE = 255;
 
     /**
      * Taille maximale pour les descriptions de location.
