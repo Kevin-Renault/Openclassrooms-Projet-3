@@ -82,6 +82,9 @@ public class FileStorageService {
 
             // Sauvegarder le fichier
             Path targetLocation = this.fileStorageLocation.resolve(uniqueFilename);
+            if (!targetLocation.startsWith(this.fileStorageLocation)) {
+                throw new FileStorageException("Tentative d'accès non autorisé détectée");
+            }
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
             log.info("Fichier sauvegardé: {}", uniqueFilename);
