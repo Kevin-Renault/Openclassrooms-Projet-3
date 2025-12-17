@@ -7,11 +7,13 @@ import com.openclassrooms.projet3.excercice1.service.RentalService;
 import com.openclassrooms.projet3.excercice1.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,12 +46,13 @@ public class RentalController {
      * @param authentication L'authentification de l'utilisateur connecté
      * @return Une réponse HTTP 201 avec les données de la location créée
      */
+    @Validated
     @Operation(summary = "Créer une location", description = "Crée une nouvelle annonce de location avec upload d'image")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<RentalDto> create(
             @RequestParam("name") String name,
-            @RequestParam("surface") Integer surface,
-            @RequestParam("price") Integer price,
+            @RequestParam("surface") @Positive Integer surface,
+            @RequestParam("price") @Positive Integer price,
             @RequestParam(value = "picture", required = false) MultipartFile picture,
             @RequestParam(value = "description", required = false) String description,
             Authentication authentication) {
@@ -104,13 +107,14 @@ public class RentalController {
      * @param description Description de la location (optionnel)
      * @return Une réponse HTTP 200 avec les données de la location mise à jour
      */
+    @Validated
     @Operation(summary = "Modifier une location", description = "Met à jour les informations d'une location existante")
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<RentalDto> update(
             @PathVariable Long id,
             @RequestParam("name") String name,
-            @RequestParam("surface") Integer surface,
-            @RequestParam("price") Integer price,
+            @RequestParam("surface") @Positive Integer surface,
+            @RequestParam("price") @Positive Integer price,
             @RequestParam(value = "description", required = false) String description) {
 
         RentalDto rentalDto = new RentalDto();

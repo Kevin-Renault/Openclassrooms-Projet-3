@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
@@ -34,15 +35,30 @@ public class GlobalExceptionHandler {
                 .stream()
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
                 .collect(Collectors.joining(", "));
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, errorMessage);
+    }
 
-        ErrorResponse errorResponse = new ErrorResponse(
-                LocalDateTime.now(),
-                HttpStatus.BAD_REQUEST.value(),
-                errorMessage);
-
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(errorResponse);
+    /**
+     * Gère les violations de contraintes sur les paramètres
+     * (@RequestParam, @PathVariable).
+     * Utilisé quand @Validated est activé sur la classe du contrôleur.
+     * 
+     * @param ex L'exception de violation de contrainte
+     * @return Une réponse HTTP 400 avec les détails des erreurs
+     */
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ErrorResponse> handleHandlerMethodValidationException(HandlerMethodValidationException ex) {
+        String errorMessage = ex.getAllValidationResults()
+                .stream()
+                .flatMap(result -> result.getResolvableErrors().stream())
+                .map(error -> {
+                    String paramName = error.getCodes() != null && error.getCodes().length > 0
+                            ? error.getCodes()[0].substring(error.getCodes()[0].lastIndexOf('.') + 1)
+                            : "paramètre";
+                    return paramName + ": " + error.getDefaultMessage();
+                })
+                .collect(Collectors.joining(", "));
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, errorMessage);
     }
 
     /**
@@ -60,14 +76,18 @@ public class GlobalExceptionHandler {
         } else {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
+        return buildErrorResponse(status, ex.getMessage());
+    }
 
+    private ResponseEntity<ErrorResponse> buildErrorResponse(HttpStatus statusCode,
+            String errorMessage) {
         ErrorResponse errorResponse = new ErrorResponse(
                 LocalDateTime.now(),
-                status.value(),
-                ex.getMessage());
+                statusCode.value(),
+                errorMessage);
 
         return ResponseEntity
-                .status(status)
+                .status(statusCode)
                 .body(errorResponse);
     }
 }
