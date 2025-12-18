@@ -217,7 +217,8 @@ L'application démarre sur le port **3001** (configuré pour l'IHM frontend).
 
 ```
 URL API : http://localhost:3001
-URL IHM : http://localhost:3001 (frontend)
+URL IHM : http://localhost:4200 (frontend)
+URL Swagger : http://localhost:3001/swagger-ui/index.html
 ```
 
 Si Tomcat démarre correctement :
