@@ -33,9 +33,9 @@ class UserControllerSecurityTest {
     private UserService userService;
 
     @Test
-    @DisplayName("GET /api/user/{id} sans token -> 401")
+    @DisplayName("GET " + ApiConstants.API_USER_URL_ID + " sans token -> 401")
     void getUserById_Unauthorized() throws Exception {
-        mockMvc.perform(get(ApiConstants.USER_ID.replace("{id}", "1")))
+        mockMvc.perform(get(ApiConstants.API_USER_URL_ID.replace("{id}", "1")))
                 .andExpect(status().isUnauthorized());
     }
 }

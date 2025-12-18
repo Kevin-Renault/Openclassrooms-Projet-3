@@ -93,6 +93,8 @@ excercice1/
 └── README.md
 ```
 
+
+
 ## ⚙️ Configuration de la base de données
 
 ### 1. Créer la base de données MySQL
@@ -106,7 +108,17 @@ FLUSH PRIVILEGES;
 
 > ⚠️ **Note** : L'utilisateur de base de données n'a que les privilèges CRUD (pas de ALTER, DROP, etc.)
 
-### 2. Configurer les variables d'environnement
+### 2. Créer les tables avec le script SQL
+
+Le script SQL permettant de créer toutes les tables nécessaires à l'application se trouve dans le dossier [`sql/`](./sql/) du projet :
+
+- [`sql/script.sql`](./sql/script.sql)
+
+Ce fichier contient la structure complète de la base de données (tables, clés, contraintes, etc.) à exécuter sur votre instance MySQL après avoir créé la base de données.
+
+---
+
+### 3. Configurer les variables d'environnement
 
 #### DB_PASSWORD (obligatoire)
 
@@ -134,7 +146,7 @@ export DB_PASSWORD="votre_mot_de_passe"
 
 > ⚠️ **Important** : Redémarrez votre terminal après avoir défini les variables d'environnement système.
 
-### 3. Configuration (application.properties)
+### 4. Configuration (application.properties)
 
 ```properties
 # Server

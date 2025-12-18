@@ -38,7 +38,7 @@ class MessageControllerSecurityTest {
     @Test
     @DisplayName("POST /api/messages sans token -> 401")
     void createMessage_Unauthorized() throws Exception {
-        mockMvc.perform(post(ApiConstants.MESSAGES_BASE)
+        mockMvc.perform(post(ApiConstants.API_MESSAGES_URL_BASE)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"content\":\"test\",\"rentalId\":1}"))
                 .andExpect(status().isUnauthorized());

@@ -44,9 +44,9 @@ class RentalControllerSecurityTest {
     private AuthService authService;
 
     @Test
-    @DisplayName("POST /api/rentals sans token -> 401")
+    @DisplayName("POST " + ApiConstants.API_RENTALS_URL_BASE + " sans token -> 401")
     void createRental_Unauthorized() throws Exception {
-        mockMvc.perform(multipart(ApiConstants.RENTALS_BASE)
+        mockMvc.perform(multipart(ApiConstants.API_RENTALS_URL_BASE)
                 .param("name", "Test")
                 .param("surface", "10")
                 .param("price", "100"))
@@ -54,23 +54,23 @@ class RentalControllerSecurityTest {
     }
 
     @Test
-    @DisplayName("GET /api/rentals/{id} sans token -> 401")
+    @DisplayName("GET " + ApiConstants.API_RENTALS_URL_ID + " sans token -> 401")
     void getRentalById_Unauthorized() throws Exception {
-        mockMvc.perform(get(ApiConstants.RENTALS_ID.replace("{id}", "1")))
+        mockMvc.perform(get(ApiConstants.API_RENTALS_URL_ID.replace("{id}", "1")))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    @DisplayName("GET /api/rentals sans token -> 401")
+    @DisplayName("GET " + ApiConstants.API_RENTALS_URL_BASE + " sans token -> 401")
     void getAllRentals_Unauthorized() throws Exception {
-        mockMvc.perform(get(ApiConstants.RENTALS_BASE))
+        mockMvc.perform(get(ApiConstants.API_RENTALS_URL_BASE))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    @DisplayName("PUT /api/rentals/{id} sans token -> 401")
+    @DisplayName("PUT " + ApiConstants.API_RENTALS_URL_ID + " sans token -> 401")
     void updateRental_Unauthorized() throws Exception {
-        mockMvc.perform(put(ApiConstants.RENTALS_ID.replace("{id}", "1"))
+        mockMvc.perform(put(ApiConstants.API_RENTALS_URL_ID.replace("{id}", "1"))
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .param("name", "Test")
                 .param("surface", "10")

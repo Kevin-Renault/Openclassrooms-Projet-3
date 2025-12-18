@@ -49,7 +49,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         // Routes publiques
-                        .requestMatchers(ApiConstants.AUTH_PUBLIC_PATHS).permitAll()
+                        .requestMatchers(ApiConstants.API_AUTH_URL_LOGIN).permitAll()
+                        .requestMatchers(ApiConstants.API_AUTH_URL_REGISTER).permitAll()
                         .requestMatchers(ApiConstants.UPLOADS_PUBLIC_PATHS).permitAll()
                         .requestMatchers(ApiConstants.SWAGGER_PATHS, ApiConstants.API_DOCS_PATHS,
                                 ApiConstants.SWAGGER_HTML_PATH)

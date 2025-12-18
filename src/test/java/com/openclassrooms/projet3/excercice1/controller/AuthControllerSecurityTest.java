@@ -41,7 +41,7 @@ class AuthControllerSecurityTest {
     @Test
     @DisplayName("GET /api/auth/me sans token -> 401")
     void getCurrentUser_Unauthorized() throws Exception {
-        mockMvc.perform(get(ApiConstants.AUTH_ME))
+        mockMvc.perform(get(ApiConstants.API_AUTH_URL_ME))
                 .andExpect(status().isUnauthorized());
     }
 }
