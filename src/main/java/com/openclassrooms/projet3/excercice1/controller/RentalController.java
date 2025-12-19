@@ -1,12 +1,17 @@
 package com.openclassrooms.projet3.excercice1.controller;
 
 import com.openclassrooms.projet3.excercice1.constants.SecurityConstants;
+import com.openclassrooms.projet3.excercice1.dto.ErrorResponse;
 import com.openclassrooms.projet3.excercice1.dto.RentalDto;
 import com.openclassrooms.projet3.excercice1.dto.RentalResponse;
 import com.openclassrooms.projet3.excercice1.service.RentalService;
 import com.openclassrooms.projet3.excercice1.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -48,6 +53,11 @@ public class RentalController {
      */
     @Validated
     @Operation(summary = "Créer une location", description = "Crée une nouvelle annonce de location avec upload d'image")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Location créée avec succès", content = @Content(schema = @Schema(implementation = RentalDto.class))),
+            @ApiResponse(responseCode = "400", description = "Requête invalide", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Non authentifié", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<RentalDto> create(
             @RequestParam("name") String name,
@@ -78,6 +88,10 @@ public class RentalController {
      * @return Une réponse HTTP 200 avec les données de la location
      */
     @Operation(summary = "Récupérer une location", description = "Récupère les détails d'une location par son ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Location trouvée", content = @Content(schema = @Schema(implementation = RentalDto.class))),
+            @ApiResponse(responseCode = "404", description = "Location non trouvée", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @GetMapping("/{id}")
     public ResponseEntity<RentalDto> findById(@PathVariable Long id) {
         RentalDto rental = rentalService.findById(id);
@@ -90,6 +104,9 @@ public class RentalController {
      * @return Une réponse HTTP 200 avec la liste des locations
      */
     @Operation(summary = "Lister les locations", description = "Récupère la liste complète de toutes les locations disponibles")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Liste des locations récupérée", content = @Content(schema = @Schema(implementation = RentalResponse.class)))
+    })
     @GetMapping
     public ResponseEntity<RentalResponse> findAll() {
         List<RentalDto> rentals = rentalService.findAll();
@@ -109,6 +126,11 @@ public class RentalController {
      */
     @Validated
     @Operation(summary = "Modifier une location", description = "Met à jour les informations d'une location existante")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Location modifiée avec succès", content = @Content(schema = @Schema(implementation = RentalDto.class))),
+            @ApiResponse(responseCode = "400", description = "Requête invalide", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Location non trouvée", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<RentalDto> update(
             @PathVariable Long id,

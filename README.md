@@ -252,7 +252,7 @@ Créer un nouveau compte utilisateur.
 }
 ```
 
-**Réponse (201 Created)** :
+**Réponse (200 OK)** :
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",

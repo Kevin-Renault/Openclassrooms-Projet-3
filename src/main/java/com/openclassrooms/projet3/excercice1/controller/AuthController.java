@@ -2,12 +2,17 @@ package com.openclassrooms.projet3.excercice1.controller;
 
 import com.openclassrooms.projet3.excercice1.constants.SecurityConstants;
 import com.openclassrooms.projet3.excercice1.dto.AuthResponse;
+import com.openclassrooms.projet3.excercice1.dto.ErrorResponse;
 import com.openclassrooms.projet3.excercice1.dto.LoginRequest;
 import com.openclassrooms.projet3.excercice1.dto.RegisterRequest;
 import com.openclassrooms.projet3.excercice1.dto.UserDto;
 import com.openclassrooms.projet3.excercice1.service.AuthService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +43,10 @@ public class AuthController {
      * @return Une réponse HTTP 201 avec le token JWT et les données utilisateur
      */
     @Operation(summary = "Enregistrer un nouvel utilisateur", description = "Crée un nouveau compte utilisateur et retourne un token JWT")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Utilisateur enregistré avec succès", content = @Content(schema = @Schema(implementation = AuthResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Requête invalide", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         AuthResponse response = authService.register(request);
@@ -52,6 +61,10 @@ public class AuthController {
      * @return Une réponse HTTP 200 avec le token JWT et les données utilisateur
      */
     @Operation(summary = "Connexion utilisateur", description = "Authentifie un utilisateur et retourne un token JWT")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Connexion réussie", content = @Content(schema = @Schema(implementation = AuthResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Identifiants invalides", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         AuthResponse response = authService.login(request);
@@ -67,6 +80,10 @@ public class AuthController {
      * @return Une réponse HTTP 200 avec les données de l'utilisateur
      */
     @Operation(summary = "Utilisateur courant", description = "Récupère les informations de l'utilisateur authentifié")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Utilisateur courant récupéré", content = @Content(schema = @Schema(implementation = UserDto.class))),
+            @ApiResponse(responseCode = "401", description = "Non authentifié", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
     @SecurityRequirement(name = SecurityConstants.BEARER_AUTH_SCHEME)
     @GetMapping("/me")
     public ResponseEntity<UserDto> getCurrentUser(Authentication authentication) {
